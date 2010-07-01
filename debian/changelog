@@ -1,0 +1,14 @@
+tuquito-software-manager (1.0-1.1) lucid; urgency=low
+
+  * Mejoras en la interfáz
+  * Mejoras en procesos
+  * Eliminadas partes no necesarias
+  * Nuevos idiomas es, pt y en
+
+ -- Mario Colque <mario@tuquito.org.ar>  Thu, 01 Jul 2010 02:36:11 -0300
+
+tuquito-software-manager (1.0-1) lucid; urgency=low
+
+  * Version inicial
+
+ -- Mario Colque <mario@tuquito.org.ar>  Sat,  12 Jun 2010 10:42:00 +0000

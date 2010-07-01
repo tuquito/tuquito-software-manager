@@ -1,0 +1,4 @@
+#!/bin/bash
+sudo rm -rf /usr/lib/tuquito/tuquito-software-manager
+sudo cp -R usr /
+tuquito-software-manager

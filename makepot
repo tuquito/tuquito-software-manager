@@ -1,0 +1,2 @@
+#!/bin/bash
+xgettext --language=Python --keyword=_ --output=po/tuquito-software-manager.pot usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py
