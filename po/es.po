@@ -66,11 +66,11 @@ msgstr "Esperando"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Waiting for medium"
-msgstr "Esperando medios"
+msgstr "Esperando el medio"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Waiting for config file prompt"
-msgstr ""
+msgstr "Esperando por el diálogo de configuración de archivo"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Waiting for lock"
@@ -90,7 +90,7 @@ msgstr "Descargando"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Committing"
-msgstr ""
+msgstr "Aplicando"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Cleaning up"
@@ -110,7 +110,7 @@ msgstr "Cancelando"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "No role set"
-msgstr ""
+msgstr "No se han asignado roles"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Installing package"
@@ -122,7 +122,7 @@ msgstr "Instalando archivo"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Upgrading package"
-msgstr "Actualiazndo paquete"
+msgstr "Actualiazando paquete"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Upgrading system"
@@ -130,7 +130,7 @@ msgstr "Actualizando el sistema"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Updating cache"
-msgstr "Actualizando la cache"
+msgstr "Actualizando caché"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Removing package"
@@ -138,7 +138,7 @@ msgstr "Eliminando paquete"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Committing package"
-msgstr ""
+msgstr "Empaquetando paquete"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Adding vendor key file"

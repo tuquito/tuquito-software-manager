@@ -49,7 +49,7 @@ msgstr "%d ações em andamento"
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:198
 #, python-format
 msgid "%d ongoing action"
-msgstr "%d acção em curso"
+msgstr "%d ação em andamento"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:228
 #, python-format
@@ -66,11 +66,11 @@ msgstr "Esperando"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Waiting for medium"
-msgstr "Esperando meios"
+msgstr "Esperando a mídia"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Waiting for config file prompt"
-msgstr ""
+msgstr "Esperando pelo prompt de configuração de arquivo"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Waiting for lock"
@@ -90,7 +90,7 @@ msgstr "Baixando"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Committing"
-msgstr ""
+msgstr "Aplicando"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:239
 msgid "Cleaning up"
@@ -110,7 +110,7 @@ msgstr "Cancelando"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "No role set"
-msgstr ""
+msgstr "Nenhuma função definida"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Installing package"
@@ -138,7 +138,7 @@ msgstr "Removendo pacote"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Committing package"
-msgstr ""
+msgstr "Empacotando pacote"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:243
 msgid "Adding vendor key file"
@@ -199,7 +199,7 @@ msgstr "_Ajuda"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:384
 msgid "About"
-msgstr "Acerca de"
+msgstr "Sobre"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:422
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:431
@@ -214,22 +214,22 @@ msgstr "Tarefa(s) em execução:"
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:550
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:975
 msgid "B"
-msgstr "B"
+msgstr ""
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:552
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:977
 msgid "KB"
-msgstr "KB"
+msgstr ""
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:554
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:979
 msgid "MB"
-msgstr "MB"
+msgstr ""
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:556
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:981
 msgid "GB"
-msgstr "GB"
+msgstr ""
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:578
 msgid "Icon"
@@ -309,7 +309,7 @@ msgstr "Gráficos"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:755
 msgid "3D"
-msgstr "3D"
+msgstr ""
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:758
 msgid "Drawing"
