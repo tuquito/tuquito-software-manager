@@ -1,3 +1,10 @@
+tuquito-software-manager (1.0-5) lucid; urgency=low
+
+  * arreglado bug de sppiner
+  * agregada la imagen no_screenshot.png
+
+ -- Mario Colque <mario@tuquito.org.ar>  Mon, 05 Jul 2010 16:11:48 -0300
+
 tuquito-software-manager (1.0-4) lucid; urgency=low
 
   * Correcciones en idiomas
