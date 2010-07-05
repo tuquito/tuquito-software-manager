@@ -1,3 +1,12 @@
+tuquito-software-manager (1.0-3) lucid; urgency=low
+
+  * Nueva función actualizar
+  * Mejoras en la interfaz gráfica
+  * Correccion en errores de ejecución
+  * Implementación de JQuery
+
+ -- Mario Colque <mario@tuquito.org.ar>  Mon, 05 Jul 2010 12:48:46 -0300
+
 tuquito-software-manager (1.0-2) lucid; urgency=low
 
   * Correciones en idiomas

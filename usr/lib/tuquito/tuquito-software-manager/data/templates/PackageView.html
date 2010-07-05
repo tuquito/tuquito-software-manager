@@ -1,35 +1,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" DIR="LTR">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US" xml:lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 	<title></title>
+	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.js"></script>
 <script type="text/javascript">
+$(document).ready(function() {
+	if ("$action" == "install"){ //no esta intalado
+		$('#install').show();
+		$('#remove').hide();
+		$('#update').hide();
+	} else if ("$action" == "update") { //esta instalado pero hay actualizacion
+		$('#install').hide();
+		$('#remove').show();
+		$('#update').show();
+	} else { // esta instalado
+		$('#install').hide();
+		$('#remove').show();
+		$('#update').hide();
+	}
+	var img = new Image();
+	$(img).load(function () {
+		$(this).addClass('nodrag')
+		.height(100)
+		.width(100)
+		.hide();
+		$('#loader').removeClass('loading').addClass('nodrag').append(this);
+		$(this).fadeIn();
+	})
+	.error(function() { $(this).attr('src', '/usr/lib/tuquito/tuquito-software-manager/data/no_screenshot.png') })
+	.attr('src', 'http://community.linuxmint.com/img/screenshots/$appname.png');
+
+});
   function changeTitle(title) { 
     document.title = title; 
   }
-  function fadeIn(objId,opacity) {
-    if (document.getElementById) {
-      obj = document.getElementById(objId);
-      if (opacity <= 100) {
-        setOpacity(obj, opacity);
-        opacity += 10;
-        window.setTimeout("fadeIn('"+objId+"',"+opacity+")", 100);
-      }
+  function button_button_clicked(data) {
+    $('.btn').hide();
+    if (data == 'update') {
+      changeTitle("call:on_button_clicked:remove");
+      changeTitle("call:on_button_clicked:install");
+    } else {
+      changeTitle("call:on_button_clicked:" + data);
     }
-  }
-  function setOpacity(obj, opacity) {
-    opacity = (opacity == 100)?99.999:opacity;
-    obj.style.opacity = opacity/100;
-  }
-  function initElement(id) {
-    element = document.getElementById(id);
-    setOpacity(element, 0);
-    element.style.visibility = 'visible';
-    fadeIn(id,0);
-  }
-  function action_button_clicked() {
-    document.getElementById("$action_button_value").style.visibility = "hidden";
-    changeTitle("call:on_button_clicked");
   }
   function action_screenshot_clicked() {   
     changeTitle("call:on_screenshot_clicked");
@@ -39,20 +52,11 @@
     changeTitle("call:on_website_clicked");
     changeTitle("nop");
   }
-  function enable_action_button() {
-    document.getElementById("$action_button_value").disabled = false;
-  }
-  function disable_action_button() {
-    document.getElementById("$action_button_value").disabled = true;
-  }
-  window.onload = function() {
-    initElement('thumbnail_img');
-  }
 </script>
 
 <style type="text/css">
 html {
-	background: url(/usr/lib/tuquito/tuquito-software-manager/data/templates/bg_dotted.png) repeat scroll 0px 0px;
+	background: url(/usr/lib/tuquito/tuquito-software-manager/data/bg_dotted.png) repeat scroll 0px 0px;
 	height: 100%;
 	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans-Serif;
 	font-size: 14px;
@@ -88,11 +92,16 @@ body {
 .btn:hover { opacity: 1 }
 
 #install {
-	background: url('/usr/lib/tuquito/tuquito-software-manager/data/templates/install.png') top left no-repeat;
+	background: url('/usr/lib/tuquito/tuquito-software-manager/data/install.png') top left no-repeat;
 }
 
 #remove {
-	background: url('/usr/lib/tuquito/tuquito-software-manager/data/templates/uninstall.png') top left no-repeat;
+	background: url('/usr/lib/tuquito/tuquito-software-manager/data/uninstall.png') top left no-repeat;
+}
+
+#update {
+	background: url('/usr/lib/tuquito/tuquito-software-manager/data/update.png') top left no-repeat;
+	top: 70px;
 }
 
 .appname
@@ -135,22 +144,6 @@ body {
 	text-align: center;
 }
 
-.screenshot {
-	position: absolute;
-	padding: 4px;
-	float: left;
-	top: 10px;
-	border-radius: 6px;
-	border: 2px solid #AFAFAF;
-	cursor: -webkit-zoom-in;
-}
-
-.nodrag {-khtml-user-drag: none;}
-
-.screenshot:hover {
-	border-color: #E64939;
-}
-
 a {
 	text-decoration: none;
 	color: #294f88;
@@ -162,13 +155,43 @@ a {
 	background: #d7e7ff;
 	padding: 20px;
 }
+
+#loader {
+	width: 100px;
+	height: 100px;
+	overflow: hidden;
+	position: absolute;
+	padding: 4px;
+	float: left;
+	top: 10px;
+	border-radius: 6px;
+	border: 2px solid #AFAFAF;
+	cursor: -webkit-zoom-in;
+}
+
+#loader:hover {
+	border-color: #E64939;
+}
+
+#loader.loading {
+	background: #FFF url(/usr/lib/tuquito/tuquito-software-manager/data/spinner.gif) no-repeat center center;
+}
+
+.nodrag { -khtml-user-drag: none }
+
+.noload {
+	background: url(/usr/lib/tuquito/tuquito-software-manager/data/no_screenshot.png) no-repeat center center;
+	border: 3px solid;
+}
 </style>
 
 </head>
 <body>
-	<a href="javascript:action_button_clicked()" class="btn nodrag" id="${action_button_value}">$action_button_label</a>
+	<a href="javascript:button_button_clicked('install')" class="btn nodrag" id="install">$install_button_label</a>
+	<a href="javascript:button_button_clicked('remove')" class="btn nodrag" id="remove">$remove_button_label</a>
+	<a href="javascript:button_button_clicked('update')" class="btn nodrag" id="update">$update_button_label</a>
 
-	<a href="javascript:action_screenshot_clicked()"><img id="thumbnail_img" class="screenshot nodrag" onerror="this.src='/usr/lib/tuquito/tuquito-software-manager/data/no-screenshot.png'" src="http://community.linuxmint.com/thumbnail.php?pic=/var/www/community.linuxmint.com/img/screenshots/$appname.png"></a>
+	<a id="loader" class="loading" href="javascript:action_screenshot_clicked()"></a>
 
 	<div id="content">
 		<h2 class="appname">$appname</h2>

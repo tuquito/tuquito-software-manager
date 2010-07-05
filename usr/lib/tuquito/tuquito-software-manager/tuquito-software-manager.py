@@ -57,19 +57,23 @@ global shutdown_flag
 shutdown_flag = False
 
 class LaunchAPTAction(threading.Thread):
-	def __init__(self, aptd_client, package):
-		threading.Thread.__init__(self)	
+	def __init__(self, aptd_client, package, action=None):
+		threading.Thread.__init__(self)
 		self.aptd_client = aptd_client
-		self.package = package		
+		self.package = package
+		self.action = action
 
 	def run(self):
-		try:				
-			if self.package.pkg.isInstalled:				
+		try:
+			if self.action == 'install':
+				transaction = self.aptd_client.install_packages([self.package.pkg.name])
+				label = _("Installing %s") % self.package.pkg.name
+			elif self.action == 'remove':
 				transaction = self.aptd_client.remove_packages([self.package.pkg.name])
 				label = _("Removing %s") % self.package.pkg.name
 			else:
 				transaction = self.aptd_client.install_packages([self.package.pkg.name])
-				label = _("Installing %s") % self.package.pkg.name			
+				label = _("Updating %s") % self.package.pkg.name
 			transaction.set_meta_data(tuquito_label=label)
 			transaction.set_meta_data(tuquito_pkgname=self.package.pkg.name)
 			transaction.run()			
@@ -85,7 +89,6 @@ class TransactionLoop(threading.Thread):
 		self.tree_transactions = wTree.get_widget("tree_transactions")
 		self.packages = packages				
 		self.apt_daemon = aptdaemon.client.get_aptdaemon()
-		
 
 	def run(self):
 		try:
@@ -266,7 +269,6 @@ class Package:
 		self.categories = []
 
 class Application():
-
 	PAGE_CATEGORIES = 0
 	PAGE_MIXED = 1
 	PAGE_PACKAGES = 2
@@ -667,10 +669,10 @@ class Application():
 		    if category.name == name:
 			self.show_category(category)		
 
-	def on_button_clicked(self):
+	def on_button_clicked(self, data=None):
 		package = self.current_package
-		if package is not None:
-			action = LaunchAPTAction(self.aptd_client, package)
+		if package is not None and data is not None:
+			action = LaunchAPTAction(self.aptd_client, package, data)
 			action.start()		
 
 	def on_screenshot_clicked(self):
@@ -716,7 +718,7 @@ class Application():
 			if f and callable(f):
 				f(*args_list)
 			# now we need to reset the title
-			self.browser.execute_script('document.title = "nop"')			
+			self.browser.execute_script('document.title = "nop"')
 
 	@print_timing
 	def add_categories(self):
@@ -992,14 +994,18 @@ class Application():
 	        elif direction ==  gtk.TEXT_DIR_LTR:
 	            subs['text_direction'] = 'DIR="LTR"'
 
+		subs['remove_button_label'] = _("Remove")
+		subs['install_button_label'] = _("Install")
+		subs['update_button_label'] = _("Update")
+
 		if package.pkg.isInstalled:
-			subs['action_button_label'] = _("Remove")
-			subs['action_button_value'] = "remove"
 			subs['version'] = package.pkg.installed.version
+			subs['action'] = 'remove'
+			if package.pkg.candidate.version > package.pkg.installed.version:
+				subs['action'] = 'update'
 		else:
-			subs['action_button_label'] = _("Install")
-			subs['action_button_value'] = "install"
 			subs['version'] = package.pkg.candidate.version
+			subs['action'] = 'install'
 
 		template = open("/usr/lib/tuquito/tuquito-software-manager/data/templates/PackageView.html").read()
 		html = string.Template(template).safe_substitute(subs)
