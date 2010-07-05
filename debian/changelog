@@ -1,3 +1,9 @@
+tuquito-software-manager (1.0-4) lucid; urgency=low
+
+  * Correcciones en idiomas
+
+ -- Mario Colque <mario@tuquito.org.ar>  Mon, 05 Jul 2010 13:02:49 -0300
+
 tuquito-software-manager (1.0-3) lucid; urgency=low
 
   * Nueva función actualizar
