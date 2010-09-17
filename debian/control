@@ -7,7 +7,7 @@ Standards-Version: 3.7.2
 
 Package: tuquito-software-manager
 Architecture: all
-Depends: python (>= 2.4), python (<< 3), python-gtk2, python-glade2, python-aptdaemon, python-sexy, python-webkit, python-imaging, ttf-freefont
+Depends: python (>= 2.4), python (<< 3), python-gtk2, python-aptdaemon, python-webkit, python-imaging
 Description: Tuquito Software Manager
  A software manager to easily install new applications.
  * Tuquito Team!
