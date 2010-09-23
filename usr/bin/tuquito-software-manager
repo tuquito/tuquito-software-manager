@@ -1,2 +1,3 @@
 #!/bin/bash
-/usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py
+/usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py &
+exit 0

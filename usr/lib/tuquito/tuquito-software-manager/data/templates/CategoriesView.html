@@ -1,9 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" DIR="LTR">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
 	<title></title>
+	<meta charset="UTF-8">
 	<script type="text/javascript">
+	document.onmousedown = new Function("return false");
+	document.onselectstart = new Function ("return false");
+	if (window.sidebar) {
+	   document.onmousedown = new Function("return false");
+	   document.onclick = new Function("return true");
+	}
+
 	function changeTitle(title) {
 		document.title = title;
 		document.title = "nop";
@@ -19,9 +26,8 @@
 		newTextAroundImg = document.createElement("div");
 		newImg = document.createElement("img");
 		newImg.src = img;
-		newImg.setAttribute("width", 32);
-		newImg.setAttribute("height", 32);
-		newImg.className = "no_drag";
+		newImg.setAttribute("width", 42);
+		newImg.setAttribute("height", 42);
 		newTextAroundImg.appendChild(newImg);
 		newText = document.createElement("div");
 		newText.align = "center";
@@ -31,7 +37,7 @@
 		newSubText.setAttribute("size", 1);
 		newSubText.setAttribute("color", "#555555");
 		//newSubText2 = document.createElement("b");
-		newSubText.appendChild(document.createTextNode(num_packages))
+		//newSubText.appendChild(document.createTextNode(num_packages))
 		//  newSubText.appendChild(newSubText2)
 
 		click_cb = 'changeTitle("call:on_category_clicked:' + name + '");';
@@ -94,7 +100,7 @@
 					break;
 				default:
 					category_delta = 0;
-			} 
+			}
 
 			// HACK: the very first key-stroke should always focus the first element
 			if (currentCategory  == -1)
@@ -122,69 +128,51 @@
 
 <style type="text/css">
 html {
-	background: url(/usr/lib/tuquito/tuquito-software-manager/data/bg_dotted.png) repeat scroll 0px 0px;
+	background: url('/usr/lib/tuquito/tuquito-software-manager/data/bg.png') repeat-x top;
 	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans-Serif;
 	height: 100%;
 	color: #4B4B4B;
+	padding: 0;
+	margin: 0;
 }
 
-body {
-	margin: 0;
-	background: url('/usr/lib/tuquito/tuquito-software-manager/data/tuquito-logo.png') bottom right no-repeat;
-	padding: 1em;
-	color: #64676A;
-}
+body { background: url('/usr/lib/tuquito/tuquito-software-manager/data/clouds.png') top right no-repeat; }
 
 #categoriesTable {
-	padding-left: 50px;
-	padding-top: 20px;
+	padding-left: 60px;
+	padding-top: 30px;
 }
-
-h2 {
-	background-color: #7D91aa;
-	border-style: solid;
-	border-width: 0 0 1px 0;
-	border-color: #E2E7EC #404a57 #404a57 #E2E7EC;
-	color: #fff;
-	padding: 0.25em 0.5em;
-	margin: 0;
-	text-shadow: #404a57 0 -1px 1px;
-}
- /* debug border */
- /* .category_td {border-width:1px;border-style:solid;} */
- /* fixed width does not work, it does not ellipsis but overflows the box */
- /* .category_td {padding:8px; margin:8px; width:6em; display:inline-block; text-overflow: ellipsis;} */
 
 .category_td {
-	margin: 10px;
+	margin: 0 10px 10px 13px;
 	padding: 8px;
 	float: left;
-	border-radius: 6px;
-	border: 2px solid #AFAFAF;
-	background: #f2f2f2 url(/usr/lib/tuquito/tuquito-software-manager/data/boton.png) repeat-x scroll left top;
-	opacity: 0.5;
 	vertical-align: top;
 	text-overflow: ellipsis;
 	display: inline-block;
-	height: 80px;
+	height: 90px;
 	width: 7em !important;
+	opacity: 0.7;
 }
 
 .category_td:hover, .category_td:focus  {
 	cursor: pointer;
-	border-color: #E64939;
 	opacity: 1;
 }
 
-.category_td:active {background-color: #EEEEEE; }
-.category_td p { font-size:90%; text-align:center; }
-.category_td div { font-size:90%; text-align:center; }
-.no_drag { -khtml-user-drag: none; }
+.category_td p { font-size: 90%; text-align: center; }
+.category_td div { font-size: 90%; text-align: center; }
+
+/* make images not draggable in the categories view */
+img { -khtml-user-drag: none; }
 </style>
 </head>
 <body>
-	<table id="categoriesTable">
-		<tr></tr>
-	</table>
+  <div id="departments">
+    <table id="categoriesTable">
+      <tr></tr>
+    </table>
+  </div>
 </body>
+<body>
 </html>

@@ -14,7 +14,7 @@
     <property name="version">1.0</property>
     <property name="copyright">Copyright &#xA9; 2010 - Tuquito Team!</property>
     <property name="comments">Le permite elegir entre miles de aplicaciones disponibles para Tuquito</property>
-    <property name="website">www.tuquito.org.ar</property>
+    <property name="website">http://www.tuquito.org.ar</property>
     <property name="website_label">Tuquito Team!</property>
     <property name="authors">Mario Colque &lt;mario@tuquito.org.ar&gt;</property>
     <property name="translator_credits" translatable="yes">Mario Colque &lt;mario@tuquito.org.ar&gt;

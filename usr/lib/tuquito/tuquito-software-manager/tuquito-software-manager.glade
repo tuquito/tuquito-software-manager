@@ -60,44 +60,14 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkVPaned" id="vpaned1">
+                  <widget class="GtkScrolledWindow" id="scrolled_mixed_categories">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="position">100</property>
-                    <property name="position_set">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <property name="shadow_type">out</property>
                     <child>
-                      <widget class="GtkScrolledWindow" id="scrolled_mixed_categories">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="hscrollbar_policy">automatic</property>
-                        <property name="vscrollbar_policy">automatic</property>
-                        <child>
-                          <placeholder/>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="resize">False</property>
-                        <property name="shrink">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="GtkScrolledWindow" id="scrolledwindow4">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="hscrollbar_policy">automatic</property>
-                        <property name="vscrollbar_policy">automatic</property>
-                        <property name="shadow_type">etched-in</property>
-                        <child>
-                          <widget class="GtkTreeView" id="tree_mixed_applications">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="resize">True</property>
-                        <property name="shrink">True</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </widget>
                   <packing>

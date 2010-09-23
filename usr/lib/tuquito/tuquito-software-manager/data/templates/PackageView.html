@@ -1,10 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 	<title></title>
+	<meta charset="UTF-8">
 	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.js"></script>
-<script type="text/javascript">
+	<script type="text/javascript">
+	document.onmousedown = new Function("return false");
+	document.onselectstart = new Function ("return false");
+	if (window.sidebar) {
+	   document.onmousedown = new Function("return false");
+	   document.onclick = new Function("return true");
+	}
+
 $(document).ready(function() {
 	if ("$action" == "install"){ //no esta intalado
 		$('#install').show();
@@ -22,52 +29,72 @@ $(document).ready(function() {
 	var img = new Image();
 	$(img).load(function () {
 		$(this).addClass('nodrag')
-		.height(100)
-		.width(100)
+		.height(72)
+		.width(72)
 		.hide();
 		$('#loader').removeClass('loading').addClass('nodrag').append(this);
 		$(this).fadeIn();
 	})
 	.error(function() { $(this).attr('src', '/usr/lib/tuquito/tuquito-software-manager/data/no_screenshot.png') })
-	.attr('src', 'http://community.linuxmint.com/img/screenshots/$appname.png');
+	.attr('src', '$icon');
 
 });
-  function changeTitle(title) { 
-    document.title = title; 
+
+  function changeTitle(title) {
+    document.title = title;
   }
   function button_button_clicked(data) {
     $('.btn').hide();
     if (data == 'update') {
-      changeTitle("call:on_button_clicked:remove");
       changeTitle("call:on_button_clicked:install");
     } else {
       changeTitle("call:on_button_clicked:" + data);
     }
   }
-  function action_screenshot_clicked() {   
+  function action_screenshot_clicked() {
     changeTitle("call:on_screenshot_clicked");
     changeTitle("nop");
   }
-  function action_website_clicked() {   
+  function action_website_clicked() {
     changeTitle("call:on_website_clicked");
     changeTitle("nop");
   }
 </script>
 
 <style type="text/css">
+*{ -khtml-user-drag: none; }
 html {
-	background: url(/usr/lib/tuquito/tuquito-software-manager/data/bg_dotted.png) repeat scroll 0px 0px;
-	height: 100%;
+	background: url('/usr/lib/tuquito/tuquito-software-manager/data/bg.png') repeat-x top;
 	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans-Serif;
-	font-size: 14px;
+	height: 100%;
 	color: #4B4B4B;
+	padding: 0;
+	margin: 0;
 }
 
 body {
-	background: url('/usr/lib/tuquito/tuquito-software-manager/data/tuquito-logo.png') bottom right no-repeat;
-	margin: 0;
-	height: 93%;
-	padding: 12px;
+	background: url('/usr/lib/tuquito/tuquito-software-manager/data/clouds.png') top right no-repeat;
+	height: 90%;
+}
+
+h1 {
+	font-size: 25px;
+	margin: 18px 0 0.1em 90px;
+}
+
+h2 {
+	font-size: 80%;
+	margin: 0 0 0.3em 90px;
+	font-weight: normal;
+}
+
+#icon {
+	width: 72px;
+	height: 72px;
+	z-index:-1;
+	position:absolute;
+	-webkit-background-clip: border-box;
+	-webkit-background-origin: border-box;
 }
 
 .btn {
@@ -89,7 +116,7 @@ body {
 	right: 10px;
 }
 
-.btn:hover { opacity: 1 }
+.btn:hover { opacity: 1; }
 
 #install {
 	background: url('/usr/lib/tuquito/tuquito-software-manager/data/install.png') top left no-repeat;
@@ -104,68 +131,46 @@ body {
 	top: 70px;
 }
 
-.appname
-{
-	text-decoration: none;
-	padding: 0;
-	margin: 0;
-	font-weight: normal;
-	font-style: normal;
-	letter-spacing: normal;
-	word-spacing: normal;
-	font-variant: normal;
-	text-decoration: none;
-	font-variant: normal;
-	text-transform: none;
-	text-align: left;
-	text-indent: 0;
-	line-height: inherit;
-	font-size: 28px;
-	text-align: center;
-	color: #3D6C95;
+a { color: #294f88; }
+
+a:hover { text-decoration: none; }
+
+#content {
+	top: 100px;
+	position: absolute;
+}
+
+#description {
+	padding: 10px;
+	font-size: 13px;
 }
 
 .data {
 	text-decoration: none;
 	padding: 0;
-	margin: 18px 0;
 	font-weight: normal;
 	font-style: normal;
 	letter-spacing: normal;
 	word-spacing: normal;
 	font-variant: normal;
-	text-decoration: none;
 	font-variant: normal;
 	text-transform: none;
 	text-align: left;
 	text-indent: 0;
 	line-height: inherit;
 	font-size: 12px;
-	text-align: center;
-}
-
-a {
-	text-decoration: none;
-	color: #294f88;
-}
-
-#description {
-	border: 1px solid #92cdec;
-	border-radius: 6px;
-	background: #d7e7ff;
-	padding: 20px;
 }
 
 #loader {
-	width: 100px;
-	height: 100px;
+	width: 72px;
+	height: 72px;
 	overflow: hidden;
 	position: absolute;
 	padding: 4px;
 	float: left;
 	top: 10px;
 	border-radius: 6px;
-	border: 2px solid #AFAFAF;
+	border: 1px solid #AFAFAF;
 	cursor: -webkit-zoom-in;
 }
 
@@ -177,27 +182,28 @@ a {
 	background: #FFF url(/usr/lib/tuquito/tuquito-software-manager/data/spinner.gif) no-repeat center center;
 }
 
-.nodrag { -khtml-user-drag: none }
-
 .noload {
-	background: url(/usr/lib/tuquito/tuquito-software-manager/data/no_screenshot.png) no-repeat center center;
+	background: url('/usr/lib/tuquito/tuquito-software-manager/data/no_screenshot.png') no-repeat center center;
 	border: 3px solid;
 }
-</style>
 
+.nodrag { -khtml-user-drag: none }
+</style>
 </head>
 <body>
 	<a href="javascript:button_button_clicked('install')" class="btn nodrag" id="install">$install_button_label</a>
 	<a href="javascript:button_button_clicked('remove')" class="btn nodrag" id="remove">$remove_button_label</a>
 	<a href="javascript:button_button_clicked('update')" class="btn nodrag" id="update">$update_button_label</a>
 
-	<a id="loader" class="loading" href="javascript:action_screenshot_clicked()"></a>
+	<img id="icon" src="$icon">
+	<!--<a id="loader" class="loading" href="javascript:action_screenshot_clicked()"></a>-->
+
+	<h1 tabindex="0">$appname</h1>
+	<h2 tabindex="0">$summary<br>$website</h2>
 
 	<div id="content">
-		<h2 class="appname">$appname</h2>
-		<div class="data"><i>$version</i><br>$summary<br>$size</div>
+		<div class="data"><b>$txtVersion</b> $version ($pkgname)<br><b>$txtSize</b> $size</div>
 		<p id="description">$description</p>
-		<a href="javascript:action_website_clicked()">$homepage</a>
 	</div>
 </body>
 </html>
