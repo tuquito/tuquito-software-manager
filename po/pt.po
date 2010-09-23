@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tuquito-software-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-23 19:39-0300\n"
+"POT-Creation-Date: 2010-09-23 20:26-0300\n"
 "PO-Revision-Date: 2010-07-01 02:17-0300\n"
 "Last-Translator: Carlos Felipe P. de Araújo <carlosfelipe@tuquito.org.ar>\n"
 "Language-Team: Portuguese\n"
@@ -217,22 +217,22 @@ msgid "Active tasks:"
 msgstr "Tarefa(s) em execução:"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:548
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:999
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1005
 msgid "B"
 msgstr ""
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:550
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1001
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1007
 msgid "KB"
 msgstr ""
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:552
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1003
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1009
 msgid "MB"
 msgstr ""
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:554
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1005
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1011
 msgid "GB"
 msgstr ""
 
@@ -261,7 +261,7 @@ msgid "Screenshot"
 msgstr "Captura de tela"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:690
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1009
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1015
 msgid "Website"
 msgstr "Website"
 
@@ -361,47 +361,50 @@ msgstr "Escritório"
 msgid "Science"
 msgstr "Ciência"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:783
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:784
 msgid "Sound and video"
 msgstr "Multimídia"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:784
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:787
 msgid "System tools"
 msgstr "Ferramentas do sistema"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:785
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:790
 msgid "Programming"
 msgstr "Programação"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:787
-msgid "All packages"
-msgstr "Todos os pacotes"
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:793
+msgid "Other"
+msgstr "Outras"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:858
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:864
 #, python-format
 msgid "%d packages"
 msgstr "%d pacotes"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:960
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:966
 msgid "Search results"
 msgstr "Resultados da pesquisa"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:987
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:993
 msgid "Version:"
 msgstr "Versão:"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:988
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:994
 msgid "Size:"
 msgstr "Tamanho:"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1019
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1025
 msgid "Remove"
 msgstr "Remover"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1020
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1026
 msgid "Install"
 msgstr "Instalar"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1021
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1027
 msgid "Update"
 msgstr "Atualizar"
+
+#~ msgid "All packages"
+#~ msgstr "Todos os pacotes"

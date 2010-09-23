@@ -780,11 +780,17 @@ class Application():
 
 		Category(_("Office"), "applications-office", ("office", "editors"), self.root_category, self.categories)
 		Category(_("Science"), "applications-science", ("science", "math"), self.root_category, self.categories)
-		Category(_("Sound and video"), "applications-multimedia", ("multimedia", "video"), self.root_category, self.categories)
-		Category(_("System tools"), "applications-system", ("system", "admin"), self.root_category, self.categories)
+
+		cat = Category(_("Sound and video"), "applications-multimedia", ("multimedia", "video"), self.root_category, self.categories)
+		cat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/sound-video.list")
+
+		cat = Category(_("System tools"), "applications-system", ("system", "admin"), self.root_category, self.categories)
+		cat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/system-tools.list")
+
 		Category(_("Programming"), "applications-development", ("devel"), self.root_category, self.categories)
 		#self.category_other = Category(_("Other"), "applications-other", None, self.root_category, self.categories)
-		self.category_all = Category(_("All packages"), "applications-other", None, self.root_category, self.categories)
+#		self.category_all = Category(_("All packages"), "applications-other", None, self.root_category, self.categories)
+		self.category_all = Category(_("Other"), "applications-other", None, self.root_category, self.categories)
 
 	def file_to_array(self, filename):
 		array = []
