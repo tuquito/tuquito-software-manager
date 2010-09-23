@@ -2,7 +2,7 @@ class Model:
 	portals = []
 	selected_category = None
 	selected_application = None
-	keyword = ""	
+	keyword = ""
 	packages_to_install = []
 	packages_to_remove = []
 	filter_applications = "all"
@@ -11,7 +11,7 @@ class Model:
 		portals = []
 		selected_category = None
 		selected_application = None
-		keyword = ""		
+		keyword = ""
 		packages_to_install = []
 		packages_to_remove = []
 		filter_applications = "all"
@@ -52,11 +52,11 @@ class Portal:
 
 class Category:
 	key = ""
-	portal = None	
+	portal = None
 	name = ""
 	description = ""
 	vieworder = 0
-	parent = None	
+	parent = None
 	subcategories = []
 	items = []
 	logo = None
@@ -75,7 +75,7 @@ class Category:
 	def add_subcategory(self, category):
 		self.subcategories.append(category)
 		category.parent = self
-	
+
 	def add_item(self, item):
 		self.items.append(item)
 		item.category = self
@@ -99,7 +99,7 @@ class Item:
 	score = 0
 	screenshot=None
 	screenshot_url=None
-	reviews = []	
+	reviews = []
 	packages = []
 	repositories = []
 	is_special = True
@@ -151,4 +151,3 @@ class Review:
 		self.comment=comment
 		self.user_id=user_id
 		self.username=username
-
