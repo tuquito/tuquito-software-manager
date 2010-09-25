@@ -5,32 +5,20 @@ import Classes
 import sys, os, commands
 import gtk, gtk.glade
 import gettext
-import tempfile
 import threading
 import webkit
-import string, Image, ImageFont, ImageDraw, ImageOps
+import string, Image, ImageFont
 import StringIO
 import time
+import ConfigParser
 import apt
 import aptdaemon
-import urllib
-import ConfigParser
 from aptdaemon.client import AptClient
 from aptdaemon import enums
-from datetime import datetime
 from subprocess import Popen, PIPE
 from widgets.pathbar2 import NavigationBar
 from widgets.searchentry import SearchEntry
 from user import home
-
-def print_timing(func):
-    def wrapper(*arg):
-        t1 = time.time()
-        res = func(*arg)
-        t2 = time.time()
-        print '%s took %0.3f ms' % (func.func_name, (t2-t1)*1000.0)
-        return res
-    return wrapper
 
 # i18n
 gettext.install("tuquito-software-manager", "/usr/share/tuquito/locale")
@@ -40,14 +28,14 @@ menuName = _("Software Manager")
 menuComment = _("Install new applications")
 
 architecture = commands.getoutput("uname -a")
-if (architecture.find("x86_64") >= 0):
+if architecture.find("x86_64") >= 0:
 	import ctypes
 	libc = ctypes.CDLL('libc.so.6')
-	libc.prctl(15, 'software-manager', 0, 0, 0)
+	libc.prctl(15, 'softwareManager', 0, 0, 0)
 else:
 	import dl
 	libc = dl.open('/lib/libc.so.6')
-	libc.call('prctl', 15, 'software-manager', 0, 0, 0)
+	libc.call('prctl', 15, 'softwareManager', 0, 0, 0)
 
 gtk.gdk.threads_init()
 
@@ -160,7 +148,7 @@ class TransactionLoop(threading.Thread):
 									while iter_apps is not None:
 										package = model_apps.get_value(iter_apps, 3)
 										if package.pkg.name == pkg_name:
-											if package.pkg.isInstalled:
+											if package.pkg.is_installed:
 												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/installed.png"))
 											else:
 												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/available.png"))
@@ -177,7 +165,7 @@ class TransactionLoop(threading.Thread):
 									while iter_apps is not None:
 										package = model_apps.get_value(iter_apps, 3)
 										if package.pkg.name == pkg_name:
-											if package.pkg.isInstalled:
+											if package.pkg.is_installed:
 												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/installed.png"))
 											else:
 												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/available.png"))
@@ -284,7 +272,6 @@ class Application():
 
 	FONT = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
 
-	@print_timing
 	def __init__(self):
 
 		self.aptd_client = AptClient()
@@ -476,7 +463,7 @@ class Application():
 		config.set("search", configName, checkmenuitem.get_active())
 		config.write(open(home + "/.tuquito/tuquito-software-manager.conf", 'w'))
 		self.prefs = self.read_configuration()
-		if (self.searchentry.get_text() != ""):
+		if self.searchentry.get_text() != "":
 			self.show_search_results(self.searchentry.get_text())
 
 	def set_external_browser(self, checkmenuitem):
@@ -546,11 +533,11 @@ class Application():
 				version = package.pkg.candidate.version
 				homepage = package.pkg.candidate.homepage
 				strSize = str(package.pkg.candidate.size) + _("B")
-				if (package.pkg.candidate.size >= 1000):
+				if package.pkg.candidate.size >= 1000:
 					strSize = str(package.pkg.candidate.size / 1000) + _("KB")
-				if (package.pkg.candidate.size >= 1000000):
+				if package.pkg.candidate.size >= 1000000:
 					strSize = str(package.pkg.candidate.size / 1000000) + _("MB")
-				if (package.pkg.candidate.size >= 1000000000):
+				if package.pkg.candidate.size >= 1000000000:
 					strSize = str(package.pkg.candidate.size / 1000000000) + _("GB")
 
 			description = description.capitalize()
@@ -617,7 +604,7 @@ class Application():
 
 	def show_selected(self, selection):
 		(model, iter) = selection.get_selected()
-		if (iter != None):
+		if iter != None:
 			self.selected_package = model.get_value(iter, 3)
 			self.show_package(self.selected_package)
 			selection.unselect_all()
@@ -629,7 +616,7 @@ class Application():
 		self.show_package(self.selected_package)
 
 	def navigate(self, button, destination):
-		if (destination == "search"):
+		if destination == "search":
 			self.notebook.set_current_page(self.PAGE_SEARCH)
 		else:
 			self.searchentry.set_text("")
@@ -715,7 +702,6 @@ class Application():
 			# now we need to reset the title
 			self.browser.execute_script('document.title = "nop"')
 
-	@print_timing
 	def add_categories(self):
 		self.categories = []
 		self.root_category = Category(_("Categories"), "applications-other", None, None, self.categories)
@@ -801,7 +787,6 @@ class Application():
 				array.append(line)
 		return array
 
-	@print_timing
 	def build_matched_packages(self):
 		# Build a list of matched packages
 		self.matchedPackages = []
@@ -809,7 +794,6 @@ class Application():
 			self.matchedPackages.extend(category.matchingPackages)
 		self.matchedPackages.sort()
 
-	@print_timing
 	def add_packages(self):
 		self.packages = []
 		self.packages_dict = {}
@@ -821,7 +805,7 @@ class Application():
 			self.category_all.packages.append(package)
 
 			# If the package is not a "matching package", find categories with matching sections
-			if (pkg.name not in self.matchedPackages):
+			if pkg.name not in self.matchedPackages:
 				section = pkg.section
 				if "/" in section:
 					section = section.split("/")[1]
@@ -876,14 +860,13 @@ class Application():
 		self.model_filter = model_applications.filter_new()
 		self.model_filter.set_visible_func(self.visible_func)
 
-
 		sans26  =  ImageFont.truetype ( self.FONT, 26 )
 		sans10  =  ImageFont.truetype ( self.FONT, 12 )
 
 		category.packages.sort()
 		for package in category.packages[0:500]:
 			iter = model_applications.insert_before(None, None)
-			if package.pkg.isInstalled:
+			if package.pkg.is_installed:
 				model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/installed.png"))
 			else:
 				model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/available.png"))
@@ -945,7 +928,7 @@ class Application():
 							found = False
 			if aux and found:
 				iter = model_applications.insert_before(None, None)
-				if package.pkg.isInstalled:
+				if package.pkg.is_installed:
 					model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/installed.png"))
 				else:
 					model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/available.png"))
@@ -969,9 +952,9 @@ class Application():
 		package = model.get_value(iter, 3)
 		if package is not None:
 			if package.pkg is not None:
-				if (package.pkg.isInstalled and self.prefs["installed_packages_visible"] == True):
+				if package.pkg.is_installed and self.prefs["installed_packages_visible"]:
 					return True
-				elif (package.pkg.isInstalled == False and self.prefs["available_packages_visible"] == True):
+				elif (not package.pkg.is_installed) and self.prefs["available_packages_visible"]:
 					return True
 		return False
 
@@ -1003,11 +986,11 @@ class Application():
 		subs['summary'] = package.pkg.candidate.summary.capitalize()
 
 		strSize = str(package.pkg.candidate.size) + _("B")
-		if (package.pkg.candidate.size >= 1000):
+		if package.pkg.candidate.size >= 1000:
 			strSize = str(package.pkg.candidate.size / 1000) + _("KB")
-		if (package.pkg.candidate.size >= 1000000):
+		if package.pkg.candidate.size >= 1000000:
 			strSize = str(package.pkg.candidate.size / 1000000) + _("MB")
-		if (package.pkg.candidate.size >= 1000000000):
+		if package.pkg.candidate.size >= 1000000000:
 			strSize = str(package.pkg.candidate.size / 1000000000) + _("GB")
 		subs['size'] = strSize
 
@@ -1026,7 +1009,7 @@ class Application():
 		subs['install_button_label'] = _("Install")
 		subs['update_button_label'] = _("Update")
 
-		if package.pkg.isInstalled:
+		if package.pkg.is_installed:
 			subs['version'] = package.pkg.installed.version
 			subs['action'] = 'remove'
 			if package.pkg.candidate.version > package.pkg.installed.version:
