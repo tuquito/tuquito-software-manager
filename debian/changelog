@@ -1,3 +1,12 @@
+tuquito-software-manager (1.0-11) maverick; urgency=low
+
+  * New interface
+  * jquery implemented
+  * new tranlations
+  * JS process optimized
+
+ -- Mario Colque <mario@tuquito.org.ar>  Tue, 28 Sep 2010 21:15:54 -0300
+
 tuquito-software-manager (1.0-10) maverick; urgency=low
 
   * new categories
