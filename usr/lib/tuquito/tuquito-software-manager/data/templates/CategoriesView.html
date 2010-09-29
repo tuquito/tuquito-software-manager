@@ -3,6 +3,7 @@
 <head>
 	<title></title>
 	<meta charset="UTF-8">
+	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.js"></script>
 	<script type="text/javascript">
 	document.onmousedown = new Function("return false");
 	document.onselectstart = new Function ("return false");
@@ -17,48 +18,35 @@
 	}
 
 	function addCategory(name, num_packages, img) {
-		oT = document.getElementsByTagName("table")[0];
-		Tr = document.getElementsByTagName("tr")[0];
-		newTd = document.createElement("td");
-		newTd.setAttribute("tabindex", 0)
-		newTd.className = "category_td";
-		// we need a <p> around the img so that we can align it
-		newTextAroundImg = document.createElement("div");
-		newImg = document.createElement("img");
-		newImg.src = img;
-		newImg.setAttribute("width", 42);
-		newImg.setAttribute("height", 42);
-		newTextAroundImg.appendChild(newImg);
-		newText = document.createElement("div");
-		newText.align = "center";
-
-		newSubText = document.createElement("font");
-		newSubText.align = "center";
-		newSubText.setAttribute("size", 1);
-		newSubText.setAttribute("color", "#555555");
-		//newSubText2 = document.createElement("b");
-		//newSubText.appendChild(document.createTextNode(num_packages))
-		//  newSubText.appendChild(newSubText2)
-
-		click_cb = 'changeTitle("call:on_category_clicked:' + name + '");';
-		newTd.setAttribute('onclick', click_cb);
-		key_cb = 'if (event.which == 13) { changeTitle("call:on_category_clicked:' + name + '"); };'
-		newTd.setAttribute('onkeydown', key_cb);
-		newTd.id = "Category_"+ parseInt(categoryCount)
-		newText.appendChild(document.createTextNode(name))
-		newText.appendChild(document.createElement("br"))
-		newText.appendChild(newSubText)
-		newTd.appendChild(newTextAroundImg);
-		newTd.appendChild(newText);
-		Tr.appendChild(newTd);
+		$("ul").append('<li id="Category_'+ parseInt(categoryCount)+'" cant="'+num_packages+'" name="'+name+'"><img src="'+img+'"></li>');
 		categoryCount += 1;
 	}
 
+	function animateItems() {
+		$("img").css({height: '42', width: '42', margin: 24});
+		$("li").mouseenter(function() {
+			var name = $(this).attr("name");
+			var cant = $(this).attr("cant");
+			$("footer span").html("<b>"+name+"</b> | " + cant).fadeIn()
+			$("footer").fadeIn(250);
+			$(this).find("img").animate({height: '66', width: '66', margin: 12}, 100);
+		}).mouseleave(function(){
+			$(this).find("img").animate({height: '42', width: '42', margin: 24}, 160);
+			$("footer span").text("$select").fadeIn();
+		});
+
+		$("li").click(function(){
+			var name = $(this).attr("name");
+			changeTitle("call:on_category_clicked:"+name);
+		}).keydown(function() {
+			var name = $(this).attr("name");
+			if (event.which == 13)
+				changeTitle("call:on_category_clicked:"+name);
+		});
+	}
+
 	function clearCategories() {
-		var row = document.getElementsByTagName("tr")[0];
-		for(var i = row.cells.length - 1; i >= 0; i--) {
-			row.deleteCell(i);
-		}
+		$("li").remove();
 	}
 
 	function currently_displayed_rows() {
@@ -118,61 +106,63 @@
 			}
 		}
 	}
-
 	// global variables to keep track of the cursor
 	var categoryCount = 0;
 	var currentCategory = -1;
 	// global key handler for the arrow keys
 	document.onkeyup = onKey;
 	</script>
-
 <style type="text/css">
+* { -khtml-user-drag: none; }
 html {
 	background: url('/usr/lib/tuquito/tuquito-software-manager/data/bg.png') repeat-x top;
-	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans-Serif;
+	font-family: "Ubuntu", Lucida Sans Unicode, Arial, Helvetica, Sans-Serif;
 	height: 100%;
 	color: #4B4B4B;
 	padding: 0;
 	margin: 0;
+	text-shadow: white 1px 1px 0px;
+	overflow: hidden;
 }
 
-body { background: url('/usr/lib/tuquito/tuquito-software-manager/data/clouds.png') top right no-repeat; }
-
-#categoriesTable {
-	padding-left: 60px;
-	padding-top: 30px;
+body {
+	background: url('/usr/lib/tuquito/tuquito-software-manager/data/clouds.png') top right no-repeat;
+	height: 90%;
+	margin: 0;
+	padding-top: 100px;
 }
 
-.category_td {
-	margin: 0 10px 10px 13px;
-	padding: 8px;
-	float: left;
-	vertical-align: top;
-	text-overflow: ellipsis;
+ul#grid { margin: 0 auto 0 auto; }
+
+ul#grid li:hover, ul#grid li:focus  { cursor: pointer; }
+
+ul#grid li {
 	display: inline-block;
+	list-style: none outside;
+	float: left;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	text-align: center;
 	height: 90px;
-	width: 7em !important;
-	opacity: 0.7;
+	width: 90px;
 }
 
-.category_td:hover, .category_td:focus  {
-	cursor: pointer;
-	opacity: 1;
+footer {
+	border-radius: 6px;
+	color: #fff;
+	position: absolute;
+	left: 4px;
+	bottom: 4px;
+	padding: 6px 18px;
+	background: #000;
+	opacity: 0.75;
+	text-shadow: none;
+	font-size: 15px;
 }
-
-.category_td p { font-size: 90%; text-align: center; }
-.category_td div { font-size: 90%; text-align: center; }
-
-/* make images not draggable in the categories view */
-img { -khtml-user-drag: none; }
 </style>
 </head>
 <body>
-  <div id="departments">
-    <table id="categoriesTable">
-      <tr></tr>
-    </table>
-  </div>
+	<ul id="grid"></ul>
+	<footer><span>$select</span></footer>
 </body>
-<body>
 </html>

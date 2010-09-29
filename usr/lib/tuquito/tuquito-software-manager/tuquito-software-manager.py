@@ -7,11 +7,12 @@ import gtk, gtk.glade
 import gettext
 import threading
 import webkit
-import string, Image, ImageFont
+import string
 import StringIO
 import time
 import ConfigParser
 import apt
+import urllib2
 import aptdaemon
 from aptdaemon.client import AptClient
 from aptdaemon import enums
@@ -51,15 +52,15 @@ class LaunchAPTAction(threading.Thread):
 
 	def run(self):
 		try:
-			if self.action == 'install':
-				transaction = self.aptd_client.install_packages([self.package.pkg.name])
-				label = _("Installing %s") % self.package.pkg.name
-			elif self.action == 'remove':
+			if self.action == 'remove':
 				transaction = self.aptd_client.remove_packages([self.package.pkg.name])
 				label = _("Removing %s") % self.package.pkg.name
 			elif self.action == 'update':
+				transaction = self.aptd_client.upgrade_packages([self.package.pkg.name])
+				label = _("Upgrading %s") % self.package.pkg.name
+			else:
 				transaction = self.aptd_client.install_packages([self.package.pkg.name])
-				label = _("Updating %s") % self.package.pkg.name
+				label = _("Installing %s") % self.package.pkg.name
 			transaction.set_meta_data(tuquito_label=label)
 			transaction.set_meta_data(tuquito_pkgname=self.package.pkg.name)
 			transaction.run()
@@ -270,10 +271,7 @@ class Application():
 	NAVIGATION_SCREENSHOT = 6
 	NAVIGATION_WEBSITE = 6
 
-	FONT = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
-
 	def __init__(self):
-
 		self.aptd_client = AptClient()
 
 		self.add_categories()
@@ -291,13 +289,7 @@ class Application():
 		self.transaction_loop.setDaemon(True)
 		self.transaction_loop.start()
 
-		if len(sys.argv) > 1 and sys.argv[1] == "list":
-			# Print packages and their categories and exit
-			self.export_listing()
-			sys.exit(0)
-
 		self.prefs = self.read_configuration()
-
 
 		# Build the menu
 		fileMenu = gtk.MenuItem(_("_File"))
@@ -332,13 +324,7 @@ class Application():
 		prefsMenu.append(searchInDescriptionMenuItem)
 		prefsMenu.append(openLinkExternalMenuItem)
 
-		#prefsMenuItem.connect("activate", open_preferences, treeview_update, statusIcon, wTree)
 		editSubmenu.append(prefsMenuItem)
-
-		"""accountMenuItem = gtk.ImageMenuItem(gtk.STOCK_PREFERENCES)
-		accountMenuItem.get_child().set_text(_("Account information"))
-		accountMenuItem.connect("activate", self.open_account_info)
-		editSubmenu.append(accountMenuItem)"""
 
 		if os.path.exists("/usr/bin/software-properties-gtk") or os.path.exists("/usr/bin/software-properties-kde"):
 			sourcesMenuItem = gtk.ImageMenuItem(gtk.STOCK_PREFERENCES)
@@ -398,13 +384,11 @@ class Application():
 
 		self.notebook = wTree.get_widget("notebook1")
 
-		sans26  =  ImageFont.truetype ( self.FONT, 26 )
-		sans10  =  ImageFont.truetype ( self.FONT, 12 )
-
 		# Build the category browsers
 		self.browser = webkit.WebView()
 		template = open("/usr/lib/tuquito/tuquito-software-manager/data/templates/CategoriesView.html").read()
 		subs = {'header': _("Categories")}
+		subs['select'] = _("Select a category...")
 		html = string.Template(template).safe_substitute(subs)
 		self.browser.load_html_string(html, "file:/")
 		self.browser.connect("load-finished", self._on_load_finished)
@@ -414,6 +398,7 @@ class Application():
 		self.browser2 = webkit.WebView()
 		template = open("/usr/lib/tuquito/tuquito-software-manager/data/templates/CategoriesView.html").read()
 		subs = {'header': _("Categories")}
+		subs['select'] = _("Select a category...")
 		html = string.Template(template).safe_substitute(subs)
 		self.browser2.load_html_string(html, "file:/")
 	 	self.browser2.connect('title-changed', self._on_title_changed)
@@ -452,7 +437,7 @@ class Application():
 		config = ConfigParser.ConfigParser()
 		config.add_section("filter")
 		config.set("filter", configName, checkmenuitem.get_active())
-		config.write(open(home + "/.tuquito/tuquito-software-manager.conf", 'w'))
+		config.write(open(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf", 'w'))
 		self.prefs = self.read_configuration()
 		if self.model_filter is not None:
 			self.model_filter.refilter()
@@ -461,7 +446,7 @@ class Application():
 		config = ConfigParser.ConfigParser()
 		config.add_section("search")
 		config.set("search", configName, checkmenuitem.get_active())
-		config.write(open(home + "/.tuquito/tuquito-software-manager.conf", 'w'))
+		config.write(open(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf", 'w'))
 		self.prefs = self.read_configuration()
 		if self.searchentry.get_text() != "":
 			self.show_search_results(self.searchentry.get_text())
@@ -470,13 +455,13 @@ class Application():
 		config = ConfigParser.ConfigParser()
 		config.add_section("general")
 		config.set("general", "external_browser", checkmenuitem.get_active())
-		config.write(open(home + "/.tuquito/tuquito-software-manager.conf", 'w'))
+		config.write(open(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf", 'w'))
 		self.prefs = self.read_configuration()
 
 	def read_configuration(self):
 		# Lee la configuración
 		config = ConfigParser.ConfigParser()
-		config.read(home + "/.tuquito/tuquito-software-manager.conf")
+		config.read(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf")
 		prefs = {}
 		#Read filter info
 		try:
@@ -517,39 +502,6 @@ class Application():
 	def open_about(self, widget):
 		os.system('/usr/lib/tuquito/tuquito-software-manager/about.py &')
 
-	def export_listing(self):
-		# packages
-		for package in self.packages:
-			summary = ""
-			if package.pkg.candidate is not None:
-				summary = package.pkg.candidate.summary
-			summary = summary.capitalize()
-			description = ""
-			version = ""
-			homepage = ""
-			strSize = ""
-			if package.pkg.candidate is not None:
-				description = package.pkg.candidate.description
-				version = package.pkg.candidate.version
-				homepage = package.pkg.candidate.homepage
-				strSize = str(package.pkg.candidate.size) + _("B")
-				if package.pkg.candidate.size >= 1000:
-					strSize = str(package.pkg.candidate.size / 1000) + _("KB")
-				if package.pkg.candidate.size >= 1000000:
-					strSize = str(package.pkg.candidate.size / 1000000) + _("MB")
-				if package.pkg.candidate.size >= 1000000000:
-					strSize = str(package.pkg.candidate.size / 1000000000) + _("GB")
-
-			description = description.capitalize()
-			description = description.replace("\r\n", "<br>")
-			description = description.replace("\n", "<br>")
-			output = package.pkg.name + "#~#" + version + "#~#" + homepage + "#~#" + strSize + "#~#" + summary + "#~#" + description + "#~#"
-			for category in package.categories:
-				output = output + category.name + ":::"
-			if output[-3:] == (":::"):
-				output = output[:-3]
-			print output
-
 	def show_transactions(self, widget):
 		self.notebook.set_current_page(self.PAGE_TRANSACTIONS)
 
@@ -571,16 +523,10 @@ class Application():
 		column1.set_min_width(350)
 		column1.set_max_width(350)
 
-#		column2 = gtk.TreeViewColumn(_("Score"), gtk.CellRendererPixbuf(), pixbuf=2)
-#		column2.set_sort_column_id(2)
-#		column2.set_resizable(True)
-
 		treeview.append_column(column0)
 		treeview.append_column(column1)
-#		treeview.append_column(column2)
 		treeview.set_headers_visible(False)
 		treeview.show()
-		#treeview.connect("row_activated", self.show_more_info)
 
 		selection = treeview.get_selection()
 		selection.set_mode(gtk.SELECTION_SINGLE)
@@ -609,12 +555,6 @@ class Application():
 			self.show_package(self.selected_package)
 			selection.unselect_all()
 
-	def show_more_info(self, tree, path, column):
-		model = tree.get_model()
-		iter = model.get_iter(path)
-		self.selected_package = model.get_value(iter, 3)
-		self.show_package(self.selected_package)
-
 	def navigate(self, button, destination):
 		if destination == "search":
 			self.notebook.set_current_page(self.PAGE_SEARCH)
@@ -634,7 +574,6 @@ class Application():
 				self.notebook.set_current_page(self.PAGE_SCREENSHOT)
 			else:
 				self.notebook.set_current_page(self.PAGE_WEBSITE)
-
 
 	def close_application(self, window, event=None, exit_code=0):
 		global shutdown_flag
@@ -774,8 +713,6 @@ class Application():
 		cat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/system-tools.list")
 
 		Category(_("Programming"), "applications-development", ("devel"), self.root_category, self.categories)
-		#self.category_other = Category(_("Other"), "applications-other", None, self.root_category, self.categories)
-#		self.category_all = Category(_("All packages"), "applications-other", None, self.root_category, self.categories)
 		self.category_all = Category(_("Other"), "applications-other", None, self.root_category, self.categories)
 
 	def file_to_array(self, filename):
@@ -846,22 +783,14 @@ class Application():
 					if iconInfo and os.path.exists(iconInfo.get_filename()):
 						icon = iconInfo.get_filename()
 				browser.execute_script('addCategory("%s", "%s", "%s")' % (cat.name, _("%d packages") % len(cat.packages), icon))
+			browser.execute_script('animateItems()')
 
 		# Load packages into self.tree_applications
 		tree_applications = self.tree_applications
-#		if (len(category.subcategories) == 0):
-#			# Show packages
-#			tree_applications = self.tree_applications
-#		else:
-#			tree_applications = self.tree_mixed_applications
-
 		model_applications = gtk.TreeStore(gtk.gdk.Pixbuf, str, gtk.gdk.Pixbuf, object)
 
 		self.model_filter = model_applications.filter_new()
 		self.model_filter.set_visible_func(self.visible_func)
-
-		sans26  =  ImageFont.truetype ( self.FONT, 26 )
-		sans10  =  ImageFont.truetype ( self.FONT, 12 )
 
 		category.packages.sort()
 		for package in category.packages[0:500]:
@@ -900,9 +829,6 @@ class Application():
 
 		self.model_filter = model_applications.filter_new()
 		self.model_filter.set_visible_func(self.visible_func)
-
-		sans26  =  ImageFont.truetype ( self.FONT, 26 )
-		sans10  =  ImageFont.truetype ( self.FONT, 12 )
 
 #		self.packages.sort()
 		for package in self.packages:
@@ -964,8 +890,16 @@ class Application():
 		icon = None
 		if theme.has_icon(package.pkg.name):
 			iconInfo = theme.lookup_icon(package.pkg.name, 72, 0)
-			if iconInfo and os.path.exists(iconInfo.get_filename()):
-				icon = iconInfo.get_filename()
+			fileName = iconInfo.get_filename()
+			baseName = os.path.basename(fileName)
+			if '.xpm' in fileName:
+				svgFile = os.path.join(home, '.tuquito/tuquito-software-manager/apps/' + baseName.replace('.xpm', '.svg'))
+				if not os.path.exists(svgFile):
+					os.system('mkdir -p ' + os.path.join(home, ".tuquito/tuquito-software-manager/apps/"))
+					os.system('cp ' + fileName + ' ' + svgFile)
+				icon = svgFile
+			elif iconInfo and os.path.exists(fileName):
+				icon = fileName
 		if icon == None:
 			iconInfo = theme.lookup_icon("applications-other", 72, 0)
 			if iconInfo and os.path.exists(iconInfo.get_filename()):
@@ -975,6 +909,13 @@ class Application():
 		subs['icon'] = icon
 		subs['txtVersion'] = _("Version:")
 		subs['txtSize'] = _("Size:")
+		subs['loading_txt'] = _("Loading score...")
+		subs['votes'] = _('votes')
+		subs['vbad'] = _('Very bad')
+		subs['ntbad'] = _('Not that bad')
+		subs['average'] = _('Average')
+		subs['good'] = _('Good')
+		subs['excellent'] = _('Excellent')
 		a = package.name.split('-')
 		c = []
 		for b in a:
@@ -1021,7 +962,6 @@ class Application():
 		template = open("/usr/lib/tuquito/tuquito-software-manager/data/templates/PackageView.html").read()
 		html = string.Template(template).safe_substitute(subs)
 		self.packageBrowser.load_html_string(html, "file:/")
-		#self.packageBrowser.show()
 
 		# Update the navigation bar
 		self.navigation_bar.add_with_id(subs['appname'], self.navigate, self.NAVIGATION_ITEM, package)

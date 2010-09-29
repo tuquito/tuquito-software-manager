@@ -4,82 +4,128 @@
 	<title></title>
 	<meta charset="UTF-8">
 	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.js"></script>
+	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery-ui.custom.min.js"></script>
+	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.ui.stars.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.ui.stars.min.css">
 	<script type="text/javascript">
 	document.onmousedown = new Function("return false");
 	document.onselectstart = new Function ("return false");
 	if (window.sidebar) {
-	   document.onmousedown = new Function("return false");
-	   document.onclick = new Function("return true");
+	    document.onmousedown = new Function("return false");
+	    document.onclick = new Function("return true");
 	}
-
-$(document).ready(function() {
-	if ("$action" == "install"){ //no esta intalado
-		$('#install').show();
-		$('#remove').hide();
-		$('#update').hide();
-	} else if ("$action" == "update") { //esta instalado pero hay actualizacion
-		$('#install').hide();
-		$('#remove').show();
-		$('#update').show();
-	} else { // esta instalado
-		$('#install').hide();
-		$('#remove').show();
-		$('#update').hide();
+	// Accepts a url and a callback function to run.
+	function requestCrossDomain( site, callback ) {
+		// If no url was passed, exit.
+		if ( !site ) {
+			alert('No site was passed.');
+			return false;
+		}
+		// Take the provided url, and add it to a YQL query. Make sure you encode it!
+		var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="' + site + '"') + '&format=xml&callback=?';
+		// Request that YSQL string, and run a callback function.
+		// Pass a defined function to prevent cache-busting.
+		$.getJSON( yql, cbFunc );
+		function cbFunc(data) {
+		// If we have something to work with...
+		if ( data.results[0] ) {
+			// Strip out all script tags, for security reasons.
+			// BE VERY CAREFUL. This helps, but we should do more.
+			data = data.results[0].replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+			data = data.replace(/<body>[\s\S]*?<p>/gi, '');
+			data = data.replace(/<\/p>[\s\S]*?<\/body>/gi, '');
+			// If the user passed a callback, and it
+			// is a function, call it, and send through the data var.
+			if ( typeof callback === 'function') {
+				callback(data);
+			}
+		}
+		// Else, Maybe we requested a site that doesn't exist, and nothing returned.
+		else throw new Error('Nothing returned from getJSON.');
+		}
 	}
-	var img = new Image();
-	$(img).load(function () {
-		$(this).addClass('nodrag')
-		.height(72)
-		.width(72)
-		.hide();
-		$('#loader').removeClass('loading').addClass('nodrag').append(this);
-		$(this).fadeIn();
-	})
-	.error(function() { $(this).attr('src', '/usr/lib/tuquito/tuquito-software-manager/data/no_screenshot.png') })
-	.attr('src', '$icon');
+	$(document).ready(function() {
+		if ("$action" == "install"){ //no esta intalado
+			$('#install').show();
+			$('#remove').hide();
+			$('#update').hide();
+		} else if ("$action" == "update") { //esta instalado pero hay actualizacion
+			$('#install').hide();
+			$('#remove').show();
+			$('#update').show();
+		} else { // esta instalado
+			$('#install').hide();
+			$('#remove').show();
+			$('#update').hide();
+		}
 
-});
-
-  function changeTitle(title) {
-    document.title = title;
-  }
-  function button_button_clicked(data) {
-    $('.btn').hide();
-    if (data == 'update') {
-      changeTitle("call:on_button_clicked:install");
-    } else {
-      changeTitle("call:on_button_clicked:" + data);
-    }
-  }
-  function action_screenshot_clicked() {
-    changeTitle("call:on_screenshot_clicked");
-    changeTitle("nop");
-  }
-  function action_website_clicked() {
-    changeTitle("call:on_website_clicked");
-    changeTitle("nop");
-  }
+		requestCrossDomain('http://tuquito.org.ar/software/show.php?id=$pkgname', function(results) {
+		   value = results.split('|');
+		   score = parseInt(value[0]);
+		   rates = parseInt(value[1]);
+		   if (rates != 0)
+		   	curval = score/rates;
+		   else
+		   	curval = 0;
+		   $('#loading').hide();
+		   $("#ratings").children().not(":radio").hide();
+		   $caption = $("<span>");
+		   $("#ratings").stars({
+			oneVoteOnly: true,
+			showTitles: true,
+			captionEl: $caption,
+			callback: function(ui, type, value)
+			{
+				$.post("http://www.tuquito.org.ar/software/votar.php", {rating:value, id:"$pkgname"});
+				$("#rates").text(rates+1);
+			}
+		   }).append('<br>(<span id="rates">' + rates + '</span> $votes) ');
+		   $caption.appendTo("#ratings");
+		   $("#ratings").stars("select", parseInt(curval)).fadeIn();
+		});
+	});
+	function changeTitle(title) {
+	    document.title = title;
+	}
+	function button_button_clicked(data) {
+	    $('.btn').fadeOut();
+	    changeTitle("call:on_button_clicked:" + data);
+	}
+	function action_screenshot_clicked() {
+	    changeTitle("call:on_screenshot_clicked");
+	    changeTitle("nop");
+	}
+	function action_website_clicked() {
+	    changeTitle("call:on_website_clicked");
+	    changeTitle("nop");
+	}
 </script>
 
 <style type="text/css">
-*{ -khtml-user-drag: none; }
+* { -khtml-user-drag: none; }
 html {
 	background: url('/usr/lib/tuquito/tuquito-software-manager/data/bg.png') repeat-x top;
-	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans-Serif;
+	font-family: "Ubuntu", Lucida Sans Unicode, Arial, Helvetica, Sans-Serif;
 	height: 100%;
 	color: #4B4B4B;
 	padding: 0;
 	margin: 0;
+	text-shadow: white 1px 1px 0px;
 }
 
 body {
 	background: url('/usr/lib/tuquito/tuquito-software-manager/data/clouds.png') top right no-repeat;
-	height: 90%;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	margin: 0;
 }
 
 h1 {
 	font-size: 25px;
 	margin: 18px 0 0.1em 90px;
+	padding-left: 10px;
 }
 
 h2 {
@@ -91,10 +137,12 @@ h2 {
 #icon {
 	width: 72px;
 	height: 72px;
-	z-index:-1;
-	position:absolute;
+	z-index: -1;
+	position: absolute;
 	-webkit-background-clip: border-box;
 	-webkit-background-origin: border-box;
+	left: 10px;
+	top: 10px;
 }
 
 .btn {
@@ -114,6 +162,8 @@ h2 {
 	opacity: 0.7;
 	position: fixed;
 	right: 10px;
+	top: 10px;
+	text-shadow: black 1px 1px 0px;
 }
 
 .btn:hover { opacity: 1; }
@@ -138,11 +188,7 @@ a:hover { text-decoration: none; }
 #content {
 	top: 100px;
 	position: absolute;
-}
-
-#description {
-	padding: 10px;
-	font-size: 13px;
+	padding-left: 10px;
 }
 
 .data {
@@ -161,48 +207,43 @@ a:hover { text-decoration: none; }
 	font-size: 12px;
 }
 
-#loader {
-	width: 72px;
-	height: 72px;
-	overflow: hidden;
-	position: absolute;
-	padding: 4px;
-	float: left;
-	top: 10px;
-	border-radius: 6px;
-	border: 1px solid #AFAFAF;
-	cursor: -webkit-zoom-in;
+#description {
+	padding: 10px;
+	font-size: 13px;
 }
 
-#loader:hover {
-	border-color: #E64939;
+#loading {
+	width: 120px;
+	text-align: center;
+	height: 30px;
 }
 
-#loader.loading {
-	background: #FFF url(/usr/lib/tuquito/tuquito-software-manager/data/spinner.gif) no-repeat center center;
-}
-
-.noload {
-	background: url('/usr/lib/tuquito/tuquito-software-manager/data/no_screenshot.png') no-repeat center center;
-	border: 3px solid;
-}
-
-.nodrag { -khtml-user-drag: none }
+#ratings { display: none; }
 </style>
 </head>
 <body>
-	<a href="javascript:button_button_clicked('install')" class="btn nodrag" id="install">$install_button_label</a>
-	<a href="javascript:button_button_clicked('remove')" class="btn nodrag" id="remove">$remove_button_label</a>
-	<a href="javascript:button_button_clicked('update')" class="btn nodrag" id="update">$update_button_label</a>
-
+	<a href="javascript:button_button_clicked('install')" class="btn" id="install">$install_button_label</a>
+	<a href="javascript:button_button_clicked('remove')" class="btn" id="remove">$remove_button_label</a>
+	<a href="javascript:button_button_clicked('update')" class="btn" id="update">$update_button_label</a>
 	<img id="icon" src="$icon">
-	<!--<a id="loader" class="loading" href="javascript:action_screenshot_clicked()"></a>-->
-
 	<h1 tabindex="0">$appname</h1>
 	<h2 tabindex="0">$summary<br>$website</h2>
-
 	<div id="content">
-		<div class="data"><b>$txtVersion</b> $version ($pkgname)<br><b>$txtSize</b> $size</div>
+		<div class="data">
+			<b>$txtVersion</b> $version ($pkgname)<br>
+			<b>$txtSize</b> $size<br>
+			<div id="loading">
+				<img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif"><br>$loading_txt
+			</div>
+			<form id="ratings">
+				<input type="radio" name="rate" value="1" title="$vbad" id="rate1"> <label for="rate1">$vbad</label>
+				<input type="radio" name="rate" value="2" title="$ntbad" id="rate2"> <label for="rate2">$ntbad</label>
+				<input type="radio" name="rate" value="3" title="$average" id="rate3"> <label for="rate3">$average</label>
+				<input type="radio" name="rate" value="4" title="$good" id="rate4"> <label for="rate4">$good</label>
+				<input type="radio" name="rate" value="5" title="$excellent" id="rate5"> <label for="rate5">$excellent</label>
+				<input type="submit" value="Rate it!">
+			</form>
+		</div>
 		<p id="description">$description</p>
 	</div>
 </body>
