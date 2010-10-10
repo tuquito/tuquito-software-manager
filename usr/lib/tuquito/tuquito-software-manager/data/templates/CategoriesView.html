@@ -28,11 +28,17 @@
 			var name = $(this).attr("name");
 			var cant = $(this).attr("cant");
 			$("footer span").html("<b>"+name+"</b> | " + cant).fadeIn()
-			$("footer").fadeIn(250);
-			$(this).find("img").animate({height: '66', width: '66', margin: 12}, 100);
+			$("footer").fadeIn(250).width('auto');
+			$(this).find("img").animate({height: '66', width: '66', margin: 12}, 120);
 		}).mouseleave(function(){
-			$(this).find("img").animate({height: '42', width: '42', margin: 24}, 160);
-			$("footer span").text("$select").fadeIn();
+			$(this).find("img").animate({height: '42', width: '42', margin: 24}, 250);
+			var width = $("footer").width();
+			$("footer span").fadeOut().remove();
+			$("footer").width(width)
+				.append("<span style='display: none;'>$select</span>")
+				.width('auto')
+				.children()
+				.fadeIn();
 		});
 
 		$("li").click(function(){
@@ -129,7 +135,7 @@ body {
 	background: url('/usr/lib/tuquito/tuquito-software-manager/data/clouds.png') top right no-repeat;
 	height: 90%;
 	margin: 0;
-	padding-top: 100px;
+	padding-top: 50px;
 }
 
 ul#grid { margin: 0 auto 0 auto; }
@@ -140,9 +146,10 @@ ul#grid li {
 	display: inline-block;
 	list-style: none outside;
 	float: left;
+	padding: 0;
 	margin-right: 20px;
 	margin-bottom: 20px;
-	text-align: center;
+	text-align: center !important;
 	height: 90px;
 	width: 90px;
 }
@@ -153,7 +160,8 @@ footer {
 	position: absolute;
 	left: 4px;
 	bottom: 4px;
-	padding: 6px 18px;
+	height: 20px;
+	padding: 6px 20px;
 	background: #000;
 	opacity: 0.75;
 	text-shadow: none;

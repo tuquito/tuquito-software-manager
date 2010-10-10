@@ -1,5 +1,23 @@
 #!/usr/bin/python
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
+
+"""
+ Gestor de programas 1.1
+ Copyright (C) 2010
+ Author: Mario Colque <mario@tuquito.org.ar>
+ Tuquito Team! - www.tuquito.org.ar
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 3 of the License.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+"""
 
 import Classes
 import sys, os, commands
@@ -20,6 +38,7 @@ from subprocess import Popen, PIPE
 from widgets.pathbar2 import NavigationBar
 from widgets.searchentry import SearchEntry
 from user import home
+import base64
 
 # i18n
 gettext.install("tuquito-software-manager", "/usr/share/tuquito/locale")
@@ -43,33 +62,10 @@ gtk.gdk.threads_init()
 global shutdown_flag
 shutdown_flag = False
 
-class LaunchAPTAction(threading.Thread):
-	def __init__(self, aptd_client, package, action=None):
-		threading.Thread.__init__(self)
-		self.aptd_client = aptd_client
-		self.package = package
-		self.action = action
-
-	def run(self):
-		try:
-			if self.action == 'remove':
-				transaction = self.aptd_client.remove_packages([self.package.pkg.name])
-				label = _("Removing %s") % self.package.pkg.name
-			elif self.action == 'update':
-				transaction = self.aptd_client.upgrade_packages([self.package.pkg.name])
-				label = _("Upgrading %s") % self.package.pkg.name
-			else:
-				transaction = self.aptd_client.install_packages([self.package.pkg.name])
-				label = _("Installing %s") % self.package.pkg.name
-			transaction.set_meta_data(tuquito_label=label)
-			transaction.set_meta_data(tuquito_pkgname=self.package.pkg.name)
-			transaction.run()
-		except Exception, detail:
-			print detail
-
 class TransactionLoop(threading.Thread):
-	def __init__(self, packages, wTree):
+	def __init__(self, application, packages, wTree):
 		threading.Thread.__init__(self)
+		self.application = application
 		self.wTree = wTree
 		self.progressbar = wTree.get_widget("progressbar1")
 		self.btn_trans = wTree.get_widget("button_transactions")
@@ -149,27 +145,7 @@ class TransactionLoop(threading.Thread):
 									while iter_apps is not None:
 										package = model_apps.get_value(iter_apps, 3)
 										if package.pkg.name == pkg_name:
-											if package.pkg.is_installed:
-												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/installed.png"))
-											else:
-												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/available.png"))
-										iter_apps = model_apps.iter_next(iter_apps)
-								gtk.gdk.threads_leave()
-
-								# Update mixed apps tree
-								gtk.gdk.threads_enter()
-								model_apps = self.wTree.get_widget("tree_applications").get_model()
-								if isinstance(model_apps, gtk.TreeModelFilter):
-									model_apps = model_apps.get_model()
-								if model_apps is not None:
-									iter_apps = model_apps.get_iter_first()
-									while iter_apps is not None:
-										package = model_apps.get_value(iter_apps, 3)
-										if package.pkg.name == pkg_name:
-											if package.pkg.is_installed:
-												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/installed.png"))
-											else:
-												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/available.png"))
+											model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.application.find_app_icon(package), 32, 32))
 										iter_apps = model_apps.iter_next(iter_apps)
 								gtk.gdk.threads_leave()
 						else:
@@ -199,6 +175,8 @@ class TransactionLoop(threading.Thread):
 					gtk.gdk.threads_leave()
 				except Exception, detail:
 					print detail
+					import traceback
+					traceback.print_exc(file=sys.stdout)
 					self.apt_daemon = aptdaemon.client.get_aptdaemon()
 					print "A problem occured but the transaction loop was kept running"
 			del model
@@ -224,12 +202,27 @@ class TransactionLoop(threading.Thread):
 		transaction.cancel()
 
 	def get_status_description(self, transaction):
+		from aptdaemon.enums import *
+		descriptions = {STATUS_SETTING_UP:_("Setting up"), STATUS_WAITING:_("Waiting"), STATUS_WAITING_MEDIUM:_("Waiting for medium"), STATUS_WAITING_CONFIG_FILE_PROMPT:_("Waiting for config file prompt"), STATUS_WAITING_LOCK:_("Waiting for lock"), STATUS_RUNNING:_("Running"), STATUS_LOADING_CACHE:_("Loading cache"), STATUS_DOWNLOADING:_("Downloading"), STATUS_COMMITTING:_("Committing"), STATUS_CLEANING_UP:_("Cleaning up"), STATUS_RESOLVING_DEP:_("Resolving dependencies"), STATUS_FINISHED:_("Finished"), STATUS_CANCELLING:_("Cancelling")}
+		if transaction.status in descriptions.keys():
+			return descriptions[transaction.status]
+		else:
+			return transaction.status
+	'''def get_status_description(self, transaction):
 		descriptions = (_("Setting up"),_("Waiting"), _("Waiting for medium"), _("Waiting for config file prompt"), _("Waiting for lock"), _("Running"), _("Loading cache"), _("Downloading"), _("Committing"), _("Cleaning up"), _("Resolving dependencies"), _("Finished"), _("Cancelling"))
-		return descriptions[transaction.status]
+		return descriptions[transaction.status]'''
+
 
 	def get_role_description(self, transaction):
+		from aptdaemon.enums import *
+		roles = {ROLE_UNSET:_("No role set"), ROLE_INSTALL_PACKAGES:_("Installing package"), ROLE_INSTALL_FILE:_("Installing file"), ROLE_UPGRADE_PACKAGES:_("Upgrading package"), ROLE_UPGRADE_SYSTEM:_("Upgrading system"), ROLE_UPDATE_CACHE:_("Updating cache"), ROLE_REMOVE_PACKAGES:_("Removing package"), ROLE_COMMIT_PACKAGES:_("Committing package"), ROLE_ADD_VENDOR_KEY_FILE:_("Adding vendor key file"), ROLE_REMOVE_VENDOR_KEY:_("Removing vendor key"), ROLE_ADD_REPOSITORY: _("Adding repository"), ROLE_ADD_VENDOR_KEY_FROM_KEYSERVER: _("Adding vendor key from keyserver"), ROLE_ENABLE_DISTRO_COMP: _("Enabling distribution component"), ROLE_FIX_BROKEN_DEPENDS: _("Fixing broken dependencies"), ROLE_FIX_INCOMPLETE_INSTALL: _("Fixing incomplete installations")}
+		if transaction.role in roles.keys():
+			return roles[transaction.role]
+		else:
+			return transaction.role
+	'''def get_role_description(self, transaction):
 		roles = (_("No role set"), _("Installing package"), _("Installing file"), _("Upgrading package"), _("Upgrading system"), _("Updating cache"), _("Removing package"), _("Committing package"), _("Adding vendor key file"), _("Removing vendor key"))
-		return roles[transaction.role]
+		return roles[transaction.role]'''
 
 class Category:
 	def __init__(self, name, icon, sections, parent, categories):
@@ -285,7 +278,8 @@ class Application():
 		wTree.get_widget("main_window").set_icon_from_file("/usr/lib/tuquito/tuquito-software-manager/logo.svg")
 		wTree.get_widget("main_window").connect("delete_event", self.close_application)
 
-		self.transaction_loop = TransactionLoop(self.packages, wTree)
+		#self.transaction_loop = TransactionLoop(self.packages, wTree)
+		self.transaction_loop = TransactionLoop(self, self.packages, wTree)
 		self.transaction_loop.setDaemon(True)
 		self.transaction_loop.start()
 
@@ -325,6 +319,11 @@ class Application():
 		prefsMenu.append(openLinkExternalMenuItem)
 
 		editSubmenu.append(prefsMenuItem)
+
+		accountMenuItem = gtk.ImageMenuItem(gtk.STOCK_PREFERENCES)
+		accountMenuItem.get_child().set_text(_("Account information"))
+		accountMenuItem.connect("activate", self.open_account_info)
+		editSubmenu.append(accountMenuItem)
 
 		if os.path.exists("/usr/bin/software-properties-gtk") or os.path.exists("/usr/bin/software-properties-kde"):
 			sourcesMenuItem = gtk.ImageMenuItem(gtk.STOCK_PREFERENCES)
@@ -436,7 +435,16 @@ class Application():
 	def set_filter(self, checkmenuitem, configName):
 		config = ConfigParser.ConfigParser()
 		config.add_section("filter")
+		if configName == "available_packages_visible":
+			config.set("filter", "installed_packages_visible", self.prefs["installed_packages_visible"])
+		else:
+			config.set("filter", "available_packages_visible", self.prefs["available_packages_visible"])
 		config.set("filter", configName, checkmenuitem.get_active())
+		config.add_section("search")
+		config.set("search", "search_in_summary", self.prefs["search_in_summary"])
+		config.set("search", "search_in_description", self.prefs["search_in_description"])
+		config.add_section("general")
+		config.set("general", "external_browser", self.prefs["external_browser"])
 		config.write(open(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf", 'w'))
 		self.prefs = self.read_configuration()
 		if self.model_filter is not None:
@@ -445,7 +453,16 @@ class Application():
 	def set_search_filter(self, checkmenuitem, configName):
 		config = ConfigParser.ConfigParser()
 		config.add_section("search")
+		if configName == "search_in_description":
+			config.set("search", "search_in_summary", self.prefs["search_in_summary"])
+		else:
+			config.set("search", "search_in_description", self.prefs["search_in_description"])
 		config.set("search", configName, checkmenuitem.get_active())
+		config.add_section("filter")
+		config.set("filter", "available_packages_visible", self.prefs["available_packages_visible"])
+		config.set("filter", "installed_packages_visible", self.prefs["installed_packages_visible"])
+		config.add_section("general")
+		config.set("general", "external_browser", self.prefs["external_browser"])
 		config.write(open(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf", 'w'))
 		self.prefs = self.read_configuration()
 		if self.searchentry.get_text() != "":
@@ -455,49 +472,96 @@ class Application():
 		config = ConfigParser.ConfigParser()
 		config.add_section("general")
 		config.set("general", "external_browser", checkmenuitem.get_active())
+		config.add_section("filter")
+		config.set("filter", "available_packages_visible", self.prefs["available_packages_visible"])
+		config.set("filter", "installed_packages_visible", self.prefs["installed_packages_visible"])
+		config.add_section("search")
+		config.set("search", "search_in_summary", self.prefs["search_in_summary"])
+		config.set("search", "search_in_description", self.prefs["search_in_description"])
 		config.write(open(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf", 'w'))
 		self.prefs = self.read_configuration()
 
-	def read_configuration(self):
+	def read_configuration(self, conf=None):
 		# Lee la configuración
 		config = ConfigParser.ConfigParser()
-		config.read(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf")
+		config.read(home + "/.tuquito/tuquito-software-manager/account.conf")
 		prefs = {}
+		#Read account info
+		try:
+			prefs["username"] = config.get('account', 'username')
+			prefs["password"] = config.get('account', 'password')
+		except:
+			prefs["username"] = ""
+			prefs["password"] = ""
+
+		config = ConfigParser.ConfigParser()
+		config.read(home + "/.tuquito/tuquito-software-manager/tuquito-software-manager.conf")
 		#Read filter info
 		try:
-			prefs["available_packages_visible"] = (config.get("filter", "available_packages_visible") == "True")
+			prefs["available_packages_visible"] = config.getboolean("filter", "available_packages_visible")
 		except:
 			prefs["available_packages_visible"] = True
 		try:
-			prefs["installed_packages_visible"] = (config.get("filter", "installed_packages_visible") == "True")
+			prefs["installed_packages_visible"] = config.getboolean("filter", "installed_packages_visible")
 		except:
 			prefs["installed_packages_visible"] = True
 
 		#Read search info
 		try:
-			prefs["search_in_summary"] = (config.get("search", "search_in_summary") == "True")
+			prefs["search_in_summary"] = config.getboolean("search", "search_in_summary")
 		except:
 			prefs["search_in_summary"] = False
 		try:
-			prefs["search_in_description"] = (config.get("search", "search_in_description") == "True")
+			prefs["search_in_description"] = config.getboolean("search", "search_in_description")
 		except:
 			prefs["search_in_description"] = False
 
 		#External browser
 		try:
-			prefs["external_browser"] = (config.get("general", "external_browser") == "True")
+			prefs["external_browser"] = config.getboolean("general", "external_browser")
 		except:
 			prefs["external_browser"] = False
-
 		return prefs
 
 	def open_repositories(self, widget):
 		if os.path.exists("/usr/bin/software-properties-gtk"):
 			os.system("gksu /usr/bin/software-properties-gtk -D '%s'" % _("Software sources"))
+		else:
+			os.system("gksu /usr/bin/software-properties-kde -D '%s'" % _("Software sources"))
 		self.close_application(None, None, 9) # Status code 9 means we want to restart ourselves
 
 	def close_window(self, widget, window):
 		window.hide()
+
+	def open_account_info(self, widget):
+		gladefile = "/usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.glade"
+		wTree = gtk.glade.XML(gladefile, "window_account")
+		wTree.get_widget("window_account").set_title(_("Account information"))
+		wTree.get_widget("label1").set_label("<b>%s</b>" % _("Your community account"))
+		wTree.get_widget("label1").set_use_markup(True)
+		wTree.get_widget("label2").set_label("<i><small>%s</small></i>" % _("Enter your account info to post comments"))
+		wTree.get_widget("label2").set_use_markup(True)
+		wTree.get_widget("label3").set_label(_("Username:"))
+		wTree.get_widget("label4").set_label(_("Password:"))
+		wTree.get_widget("entry_username").set_text(self.prefs["username"])
+		wTree.get_widget("entry_password").set_text(base64.b64decode(self.prefs["password"]))
+		wTree.get_widget("close_button").connect("clicked", self.close_window, wTree.get_widget("window_account"))
+		wTree.get_widget("save_button").connect("clicked", self.update_account_info, wTree)
+		wTree.get_widget("window_account").show_all()
+
+	def close_window(self, widget, window):
+		window.hide()
+
+	def update_account_info(self, widteg, data=None):
+		config = ConfigParser.ConfigParser()
+		config.add_section("account")
+		username = data.get_widget("entry_username").get_text()
+		password = base64.b64encode(data.get_widget("entry_password").get_text())
+		config.set("account", "username", username)
+		config.set("account", "password", password)
+		config.write(open(home + "/.tuquito/tuquito-software-manager/account.conf", 'w'))
+		self.prefs = self.read_configuration()
+		data.get_widget("window_account").hide()
 
 	def open_about(self, widget):
 		os.system('/usr/lib/tuquito/tuquito-software-manager/about.py &')
@@ -590,11 +654,19 @@ class Application():
 		    if category.name == name:
 			self.show_category(category)
 
-	def on_button_clicked(self, data=None):
+	def on_button_clicked(self):
+		package = self.current_package
+		if package is not None:
+			if package.pkg.is_installed:
+				os.system("/usr/lib/tuquito/tuquito-software-manager/aptd_client.py remove %s" % package.pkg.name)
+			else:
+				os.system("/usr/lib/tuquito/tuquito-software-manager/aptd_client.py install %s" % package.pkg.name)
+
+	'''def on_button_clicked(self, data=None):
 		package = self.current_package
 		if package is not None and data is not None:
 			action = LaunchAPTAction(self.aptd_client, package, data)
-			action.start()
+			action.start()'''
 
 	def on_screenshot_clicked(self):
 		package = self.current_package
@@ -608,12 +680,19 @@ class Application():
 
 	def on_website_clicked(self):
 		package = self.current_package
-		if package is not None:
+		if package != None:
+			url = self.current_package.pkg.candidate.homepage
 			if self.prefs['external_browser']:
-				os.system("xdg-open " + self.current_package.pkg.candidate.homepage + " &")
+				os.system("xdg-open " + url + " &")
 			else:
-				self.websiteBrowser.open(self.current_package.pkg.candidate.homepage)
+				self.websiteBrowser.open(url)
 				self.navigation_bar.add_with_id(_("Website"), self.navigate, self.NAVIGATION_WEBSITE, "website")
+
+	def on_comment_clicked(self, package=None):
+		if package != None:
+			url = "http://www.tuquito.org.ar/software/comment.php?name=" + package + "&limit=false"
+			self.websiteBrowser.open(url)
+			self.navigation_bar.add_with_id(_("Comments"), self.navigate, self.NAVIGATION_WEBSITE, "website")
 
 	def _on_title_changed(self, view, frame, title):
 		# no op - needed to reset the title after a action so that
@@ -644,12 +723,19 @@ class Application():
 	def add_categories(self):
 		self.categories = []
 		self.root_category = Category(_("Categories"), "applications-other", None, None, self.categories)
-		featured = Category(_("Featured"), "emblem-special", None, self.root_category, self.categories)
+		featured = Category(_("Featured"), "gtk-about", None, self.root_category, self.categories)
 		featured.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/featured.list")
+
 		Category(_("Accessories"), "applications-utilities", ("accessories", "utils"), self.root_category, self.categories)
+
+		subcat = Category(_("Access"), "access", None, self.root_category, self.categories)
+		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/access.list")
 
 		subcat = Category(_("Education"), "applications-accessories", ("education", "math"), self.root_category, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/education.list")
+
+		subcat = Category(_("Fonts"), "applications-fonts", None, self.root_category, self.categories)
+		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/fonts.list")
 
 		games = Category(_("Games"), "applications-games", ("games"), self.root_category, self.categories)
 
@@ -709,10 +795,14 @@ class Application():
 		cat = Category(_("Sound and video"), "applications-multimedia", ("multimedia", "video"), self.root_category, self.categories)
 		cat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/sound-video.list")
 
+		subcat = Category(_("Themes and tweaks"), "preferences-other", None, self.root_category, self.categories)
+		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/themes-tweaks.list")
+
 		cat = Category(_("System tools"), "applications-system", ("system", "admin"), self.root_category, self.categories)
 		cat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/system-tools.list")
 
 		Category(_("Programming"), "applications-development", ("devel"), self.root_category, self.categories)
+
 		self.category_all = Category(_("Other"), "applications-other", None, self.root_category, self.categories)
 
 	def file_to_array(self, filename):
@@ -916,6 +1006,15 @@ class Application():
 		subs['average'] = _('Average')
 		subs['good'] = _('Good')
 		subs['excellent'] = _('Excellent')
+		subs['timeout_error'] = _('Error loading data')
+		subs['just_now'] = _('Just now')
+		subs['more'] = _('More...')
+		subs['nick'] = self.prefs["username"]
+		subs['pass'] = base64.b64decode(self.prefs["password"])
+		subs['comment'] = _('Comment')
+		subs['comments'] = _('comments')
+		subs['send'] = _('Send')
+		subs['loading_comments'] = _('Loading comments...')
 		a = package.name.split('-')
 		c = []
 		for b in a:
@@ -936,9 +1035,9 @@ class Application():
 		subs['size'] = strSize
 
 		if len(package.pkg.candidate.homepage) > 0:
-			subs['website'] = '<a href="javascript:action_website_clicked()">' + _("Website") + '</a>'
+			subs['website'] = '<a href="javascript:action_website_clicked()">' + _("Website") + '</a> -'
 		else:
-			subs['website'] = " "
+			subs['website'] = ""
 
 		direction = gtk.widget_get_default_direction()
 	        if direction ==  gtk.TEXT_DIR_RTL:

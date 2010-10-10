@@ -19,20 +19,24 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 """
 
-import gtk
+import aptdaemon, sys, gettext
+from aptdaemon.client import AptClient
 
-class About:
-	def __init__(self):
-		self.glade = gtk.Builder()
-		self.glade.add_from_file('/usr/lib/tuquito/tuquito-software-manager/about.glade')
-		self.window = self.glade.get_object('about')
-		self.glade.connect_signals(self)
-		self.window.show()
+# i18n
+gettext.install("tuquito-software-manager", "/usr/share/tuquito/locale")
 
-	def quit(self, widget, data=None):
-		gtk.main_quit()
-		return True
-
-if __name__ == '__main__':
-	win = About()
-	gtk.main()
+if len(sys.argv) == 3:
+	operation = sys.argv[1]
+	package = sys.argv[2]
+	aptd_client = AptClient()
+	if operation == "install":
+		transaction = aptd_client.install_packages([package])
+		transaction.set_meta_data(mintinstall_label=_("Installing %s") % package)
+	elif operation == "remove":
+		transaction = aptd_client.remove_packages([package])
+		transaction.set_meta_data(mintinstall_label=_("Removing %s") % package)
+	else:
+		print "Invalid operation: %s" % operation
+		sys.exit(1)
+	transaction.set_meta_data(mintinstall_pkgname=package)
+	transaction.run()
