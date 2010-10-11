@@ -71,6 +71,7 @@ class TransactionLoop(threading.Thread):
 		self.btn_trans = wTree.get_widget("button_transactions")
 		self.tree_transactions = wTree.get_widget("tree_transactions")
 		self.packages = packages
+		from aptdaemon import client
 		self.apt_daemon = aptdaemon.client.get_aptdaemon()
 
 	def run(self):
