@@ -10,7 +10,7 @@
 	<script type="text/javascript">
 	document.onselectstart = new Function ("return false");
     function getData(name, callback) {
-        var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="http://tuquito.org.ar/software/rating.php?name=' + name + '"') + '&format=xml&callback=?';
+        var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/rating.php?name=' + name + '"') + '&format=xml&callback=?';
         $.getJSON( yql, cbFunc );
         var time = setTimeout(function (){
             $('#loading').html('<div id="error">$timeout_error</div>').fadeIn();
@@ -30,7 +30,7 @@
     }
 
     function getReview(name, callback) {
-        var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="http://tuquito.org.ar/software/comment.php?name=' + name + '"') + '&format=xml&callback=?';
+        var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/comment.php?name=' + name + '"') + '&format=xml&callback=?';
         $.getJSON( yql, cbFunc );
         var time = setTimeout(function (){
             $('#loadingr').html('<div id="error">$timeout_error</div>').fadeIn();
@@ -81,7 +81,7 @@
 			captionEl: $caption,
 			callback: function(ui, type, value)
 			{
-				$.post("http://www.tuquito.org.ar/software/rating.php", {rating: value, name: "$pkgname"});
+				$.post("http://apps.tuquito.org.ar/rating.php", {rating: value, name: "$pkgname"});
 				$("#rates").text(rates+1);
 				curval = (score+parseInt(value))/(rates+1)
 				$("#ratings").stars("select", parseInt(curval)).fadeIn();
@@ -105,7 +105,7 @@
         }
 	    $("#comment_text").attr('disabled','disabled');
 	    $("#comment_error").html('<img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif" id="load_form">');
-        var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="http://tuquito.org.ar/software/comment.php?name=$pkgname&nick=$nick&pass=$pass&c='+comment+'"') + '&format=xml&callback=?';
+        var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/comment.php?name=$pkgname&nick=$nick&pass=$pass&c='+comment+'"') + '&format=xml&callback=?';
         $.getJSON( yql, cbFunc );
         var time = setTimeout(function (){
             $('#comment_error').html('<span id="error">$timeout_error</span>').fadeIn();
