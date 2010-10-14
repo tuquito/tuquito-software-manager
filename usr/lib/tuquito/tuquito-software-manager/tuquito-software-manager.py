@@ -1066,7 +1066,9 @@ class Application():
 		# Update the navigation bar
 		self.navigation_bar.add_with_id(subs['appname'], self.navigate, self.NAVIGATION_ITEM, package)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+	if not os.path.exists(home + '/.tuquito/tuquito-software-manager/'):
+		os.system('mkdir -p ' + home + '/.tuquito/tuquito-software-manager/')
 	model = Classes.Model()
 	Application()
 	gtk.main()
