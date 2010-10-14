@@ -1,3 +1,9 @@
+tuquito-software-manager (1.1-3) maverick; urgency=low
+
+  * new site server, apps.tuquito.org.ar
+
+ -- Mario Colque <mario@tuquito.org.ar>  Wed, 13 Oct 2010 21:42:23 -0300
+
 tuquito-software-manager (1.1-2) maverick; urgency=low
 
   * Fixed import error
