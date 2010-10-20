@@ -21,19 +21,19 @@
 
 import Classes
 import sys, os, commands
-import gtk, gtk.glade
-import gettext
+import gtk
+import gtk.glade
 import threading
+import gettext
 import webkit
 import string
 import StringIO
 import time
 import ConfigParser
-import apt
 import urllib2
+import apt
 import aptdaemon
-from aptdaemon.client import AptClient
-from aptdaemon import enums
+from aptdaemon import client
 from subprocess import Popen, PIPE
 from widgets.pathbar2 import NavigationBar
 from widgets.searchentry import SearchEntry
@@ -67,16 +67,14 @@ class TransactionLoop(threading.Thread):
 		threading.Thread.__init__(self)
 		self.application = application
 		self.wTree = wTree
-		self.progressbar = wTree.get_widget("progressbar1")
+		self.progressbar = wTree.get_widget("progressbar")
 		self.btn_trans = wTree.get_widget("button_transactions")
 		self.tree_transactions = wTree.get_widget("tree_transactions")
 		self.packages = packages
-		from aptdaemon import client
 		self.apt_daemon = aptdaemon.client.get_aptdaemon()
 
 	def run(self):
 		try:
-			from aptdaemon import client
 			model = gtk.TreeStore(str, str, str, float, object)
 			self.tree_transactions.set_model(model)
 			self.tree_transactions.connect("button-release-event", self.menuPopup)
@@ -154,7 +152,7 @@ class TransactionLoop(threading.Thread):
 
 					if num_transactions > 0:
 						gtk.gdk.threads_enter()
-						self.btn_trans.show()
+						self.btn_trans.show_all()
 						gtk.gdk.threads_leave()
 						todo = 90 * num_transactions # because they only go to 90%
 						fraction = float(sum_progress) / float(todo)
@@ -209,10 +207,6 @@ class TransactionLoop(threading.Thread):
 			return descriptions[transaction.status]
 		else:
 			return transaction.status
-	'''def get_status_description(self, transaction):
-		descriptions = (_("Setting up"),_("Waiting"), _("Waiting for medium"), _("Waiting for config file prompt"), _("Waiting for lock"), _("Running"), _("Loading cache"), _("Downloading"), _("Committing"), _("Cleaning up"), _("Resolving dependencies"), _("Finished"), _("Cancelling"))
-		return descriptions[transaction.status]'''
-
 
 	def get_role_description(self, transaction):
 		from aptdaemon.enums import *
@@ -221,9 +215,6 @@ class TransactionLoop(threading.Thread):
 			return roles[transaction.role]
 		else:
 			return transaction.role
-	'''def get_role_description(self, transaction):
-		roles = (_("No role set"), _("Installing package"), _("Installing file"), _("Upgrading package"), _("Upgrading system"), _("Updating cache"), _("Removing package"), _("Committing package"), _("Adding vendor key file"), _("Removing vendor key"))
-		return roles[transaction.role]'''
 
 class Category:
 	def __init__(self, name, icon, sections, parent, categories):
@@ -266,8 +257,6 @@ class Application():
 	NAVIGATION_WEBSITE = 6
 
 	def __init__(self):
-		self.aptd_client = AptClient()
-
 		self.add_categories()
 		self.build_matched_packages()
 		self.add_packages()
@@ -279,7 +268,6 @@ class Application():
 		wTree.get_widget("main_window").set_icon_from_file("/usr/lib/tuquito/tuquito-software-manager/logo.svg")
 		wTree.get_widget("main_window").connect("delete_event", self.close_application)
 
-		#self.transaction_loop = TransactionLoop(self.packages, wTree)
 		self.transaction_loop = TransactionLoop(self, self.packages, wTree)
 		self.transaction_loop.setDaemon(True)
 		self.transaction_loop.start()
@@ -356,8 +344,6 @@ class Application():
 		aboutMenuItem.connect("activate", self.open_about)
 		helpSubmenu.append(aboutMenuItem)
 
-		#browser.connect("activate", browser_callback)
-		#browser.show()
 		wTree.get_widget("menubar1").append(fileMenu)
 		wTree.get_widget("menubar1").append(editMenu)
 		wTree.get_widget("menubar1").append(viewMenu)
@@ -365,12 +351,10 @@ class Application():
 
 		# Build the applications tables
 		self.tree_applications = wTree.get_widget("tree_applications")
-#		self.tree_mixed_applications = wTree.get_widget("tree_mixed_applications")
 		self.tree_search = wTree.get_widget("tree_search")
 		self.tree_transactions = wTree.get_widget("tree_transactions")
 
 		self.build_application_tree(self.tree_applications)
-#		self.build_application_tree(self.tree_mixed_applications)
 		self.build_application_tree(self.tree_search)
 		self.build_transactions_tree(self.tree_transactions)
 
@@ -409,8 +393,8 @@ class Application():
 
 		self.packageBrowser.connect('title-changed', self._on_title_changed)
 
-		self.screenshotBrowser = webkit.WebView()
-		wTree.get_widget("scrolled_screenshot").add(self.screenshotBrowser)
+		#self.screenshotBrowser = webkit.WebView()
+		#wTree.get_widget("scrolled_screenshot").add(self.screenshotBrowser)
 
 		self.websiteBrowser = webkit.WebView()
 		wTree.get_widget("scrolled_website").add(self.websiteBrowser)
@@ -419,10 +403,8 @@ class Application():
 	        self.browser.connect("button-press-event", lambda w, e: e.button == 3)
 		self.browser2.connect("button-press-event", lambda w, e: e.button == 3)
 		self.packageBrowser.connect("button-press-event", lambda w, e: e.button == 3)
-		self.screenshotBrowser.connect("button-press-event", lambda w, e: e.button == 3)
 
 		wTree.get_widget("label_transactions_header").set_text(_("Active tasks:"))
-		wTree.get_widget("progressbar1").hide_all()
 
 		wTree.get_widget("button_transactions").connect("clicked", self.show_transactions)
 
@@ -580,9 +562,12 @@ class Application():
 		column0 = gtk.TreeViewColumn(_("Icon"), gtk.CellRendererPixbuf(), pixbuf=0)
 		column0.set_sort_column_id(0)
 		column0.set_resizable(True)
+		column0.set_alignment(1)
+		column0.set_min_width(70)
+		column0.set_max_width(70)
 
 		column1 = gtk.TreeViewColumn(_("Application"), gtk.CellRendererText(), markup=1)
-		column1.set_sort_column_id(1)
+		column1.set_sort_column_id(2)
 		column1.set_resizable(True)
 		column1.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
 		column1.set_min_width(350)
@@ -590,7 +575,6 @@ class Application():
 
 		treeview.append_column(column0)
 		treeview.append_column(column1)
-		treeview.set_headers_visible(False)
 		treeview.show()
 
 		selection = treeview.get_selection()
@@ -610,7 +594,6 @@ class Application():
 		treeview.append_column(column0)
 		treeview.append_column(column1)
 		treeview.append_column(column2)
-		treeview.set_headers_visible(True)
 		treeview.show()
 
 	def show_selected(self, selection):
@@ -657,27 +640,11 @@ class Application():
 
 	def on_button_clicked(self):
 		package = self.current_package
-		if package is not None:
+		if package != None:
 			if package.pkg.is_installed:
-				os.system("/usr/lib/tuquito/tuquito-software-manager/aptd_client.py remove %s" % package.pkg.name)
+				os.system("/usr/lib/tuquito/tuquito-software-manager/aptd_client.py remove %s &" % package.pkg.name)
 			else:
-				os.system("/usr/lib/tuquito/tuquito-software-manager/aptd_client.py install %s" % package.pkg.name)
-
-	'''def on_button_clicked(self, data=None):
-		package = self.current_package
-		if package is not None and data is not None:
-			action = LaunchAPTAction(self.aptd_client, package, data)
-			action.start()'''
-
-	def on_screenshot_clicked(self):
-		package = self.current_package
-		if package is not None:
-			template = open("/usr/lib/tuquito/tuquito-software-manager/data/templates/ScreenshotView.html").read()
-			subs = {}
-			subs['appname'] = self.current_package.pkg.name
-			html = string.Template(template).safe_substitute(subs)
-			self.screenshotBrowser.load_html_string(html, "file:/")
-			self.navigation_bar.add_with_id(_("Screenshot"), self.navigate, self.NAVIGATION_SCREENSHOT, "screenshot")
+				os.system("/usr/lib/tuquito/tuquito-software-manager/aptd_client.py install %s &" % package.pkg.name)
 
 	def on_website_clicked(self):
 		package = self.current_package
@@ -689,9 +656,10 @@ class Application():
 				self.websiteBrowser.open(url)
 				self.navigation_bar.add_with_id(_("Website"), self.navigate, self.NAVIGATION_WEBSITE, "website")
 
-	def on_comment_clicked(self, package=None):
+	def on_comment_clicked(self):
+		package = self.current_package
 		if package != None:
-			url = "http://www.tuquito.org.ar/software/comment.php?name=" + package + "&limit=false"
+			url = "http://apps.tuquito.org.ar/comment.php?name=" + package.pkg.name + "&limit=false"
 			self.websiteBrowser.open(url)
 			self.navigation_bar.add_with_id(_("Comments"), self.navigate, self.NAVIGATION_WEBSITE, "website")
 
@@ -739,48 +707,35 @@ class Application():
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/fonts.list")
 
 		games = Category(_("Games"), "applications-games", ("games"), self.root_category, self.categories)
-
 		subcat = Category(_("Board games"), "applications-games", None, games, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/games-board.list")
-
 		subcat = Category(_("First-person shooters"), "applications-games", None, games, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/games-fps.list")
-
 		subcat = Category(_("Real-time strategy"), "applications-games", None, games, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/games-rts.list")
-
 		subcat = Category(_("Turn-based strategy"), "applications-games", None, games, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/games-tbs.list")
-
 		subcat = Category(_("Emulators"), "applications-games", None, games, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/games-emulators.list")
-
 		subcat = Category(_("Simulation and racing"), "applications-games", None, games, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/games-simulations.list")
 
 		graphics = Category(_("Graphics"), "applications-graphics", ("graphics"), self.root_category, self.categories)
 		graphics.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/graphics.list")
-
 		subcat = Category(_("3D"), "applications-graphics", None, graphics, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/graphics-3d.list")
-
 		subcat = Category(_("Drawing"), "applications-graphics", None, graphics, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/graphics-drawing.list")
-
 		subcat = Category(_("Photography"), "applications-graphics", None, graphics, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/graphics-photography.list")
-
 		subcat = Category(_("Publishing"), "applications-graphics", None, graphics, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/graphics-publishing.list")
-
 		subcat = Category(_("Scanning"), "applications-graphics", None, graphics, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/graphics-scanning.list")
-
 		subcat = Category(_("Viewers"), "applications-graphics", None, graphics, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/graphics-viewers.list")
 
 		internet = Category(_("Internet"), "applications-internet", ("mail", "web", "net"), self.root_category, self.categories)
-
 		subcat = Category(_("Web"), "applications-internet", None, internet, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/internet-web.list")
 		subcat = Category(_("Email"), "applications-internet", None, internet, self.categories)
@@ -793,14 +748,19 @@ class Application():
 		Category(_("Office"), "applications-office", ("office", "editors"), self.root_category, self.categories)
 		Category(_("Science"), "applications-science", ("science", "math"), self.root_category, self.categories)
 
-		cat = Category(_("Sound and video"), "applications-multimedia", ("multimedia", "video"), self.root_category, self.categories)
-		cat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/sound-video.list")
+		soundvideo = Category(_("Sound and video"), "applications-multimedia", ("multimedia", "video"), self.root_category, self.categories)
+		subcat = Category(_("Players"), "applications-multimedia", None, soundvideo, self.categories)
+		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/sound-video-players.list")
+		subcat = Category(_("Editors"), "applications-multimedia", None, soundvideo, self.categories)
+		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/sound-video-editors.list")
+		subcat = Category(_("Multimedia"), "applications-multimedia", None, soundvideo, self.categories)
+		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/sound-video-other.list")
 
 		subcat = Category(_("Themes and tweaks"), "preferences-other", None, self.root_category, self.categories)
 		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/themes-tweaks.list")
 
-		cat = Category(_("System tools"), "applications-system", ("system", "admin"), self.root_category, self.categories)
-		cat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/system-tools.list")
+		subcat = Category(_("System tools"), "applications-system", ("system", "admin"), self.root_category, self.categories)
+		subcat.matchingPackages = self.file_to_array("/usr/lib/tuquito/tuquito-software-manager/categories/system-tools.list")
 
 		Category(_("Programming"), "applications-development", ("devel"), self.root_category, self.categories)
 
@@ -864,15 +824,13 @@ class Application():
 			theme = gtk.icon_theme_get_default()
 			browser.execute_script('clearCategories()')
 			for cat in category.subcategories:
-				icon = None
 				if theme.has_icon(cat.icon):
 					iconInfo = theme.lookup_icon(cat.icon, 42, 0)
-					if iconInfo and os.path.exists(iconInfo.get_filename()):
-						icon = iconInfo.get_filename()
-				if icon == None:
+				else:
 					iconInfo = theme.lookup_icon("applications-other", 42, 0)
-					if iconInfo and os.path.exists(iconInfo.get_filename()):
-						icon = iconInfo.get_filename()
+
+				if iconInfo and os.path.exists(iconInfo.get_filename()):
+					icon = iconInfo.get_filename()
 				browser.execute_script('addCategory("%s", "%s", "%s")' % (cat.name, _("%d packages") % len(cat.packages), icon))
 			browser.execute_script('animateItems()')
 
@@ -886,11 +844,7 @@ class Application():
 		category.packages.sort()
 		for package in category.packages[0:500]:
 			iter = model_applications.insert_before(None, None)
-			if package.pkg.is_installed:
-				model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/installed.png"))
-			else:
-				model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/available.png"))
-
+			model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon(package), 32, 32))
 			summary = ""
 			if package.pkg.candidate is not None:
 				summary = package.pkg.candidate.summary
@@ -914,6 +868,22 @@ class Application():
 		else:
 			self.navigation_bar.add_with_id(category.name, self.navigate, self.NAVIGATION_SUB_CATEGORY, category)
 
+	def find_app_icon(self, package):
+		if package.pkg.is_installed:
+			icon_path = "/usr/share/tuquito/tuquito-software-manager/installed/%s" % package.name
+		else:
+			icon_path = "/usr/share/tuquito/tuquito-software-manager/icons/%s" % package.name
+		if os.path.exists(icon_path + ".png"):
+			icon_path = icon_path + ".png"
+		elif os.path.exists(icon_path + ".xpm"):
+			icon_path = icon_path + ".xpm"
+		else:
+			if package.pkg.is_installed:
+				icon_path = "/usr/lib/tuquito/tuquito-software-manager/data/installed.png"
+			else:
+				icon_path = "/usr/lib/tuquito/tuquito-software-manager/data/available.png"
+		return icon_path
+
 	def show_search_results(self, terms):
 		# Load packages into self.tree_search
 		model_applications = gtk.TreeStore(gtk.gdk.Pixbuf, str, gtk.gdk.Pixbuf, object)
@@ -921,7 +891,7 @@ class Application():
 		self.model_filter = model_applications.filter_new()
 		self.model_filter.set_visible_func(self.visible_func)
 
-#		self.packages.sort()
+		self.packages.sort()
 		for package in self.packages:
 			termss = terms.split(' ')
 			if len(termss) > 1:
@@ -945,11 +915,7 @@ class Application():
 							found = False
 			if aux and found:
 				iter = model_applications.insert_before(None, None)
-				if package.pkg.is_installed:
-					model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/installed.png"))
-				else:
-					model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file("/usr/lib/tuquito/tuquito-software-manager/data/available.png"))
-
+				model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon(package), 32, 32))
 				summary = ""
 				if package.pkg.candidate is not None:
 					summary = package.pkg.candidate.summary
@@ -978,7 +944,6 @@ class Application():
 	def show_package(self, package):
 		theme = gtk.icon_theme_get_default()
 		self.current_package = package
-		icon = None
 		if theme.has_icon(package.pkg.name):
 			iconInfo = theme.lookup_icon(package.pkg.name, 72, 0)
 			fileName = iconInfo.get_filename()
@@ -991,7 +956,7 @@ class Application():
 				icon = svgFile
 			elif iconInfo and os.path.exists(fileName):
 				icon = fileName
-		if icon == None:
+		else:
 			iconInfo = theme.lookup_icon("applications-other", 72, 0)
 			if iconInfo and os.path.exists(iconInfo.get_filename()):
 				icon = iconInfo.get_filename()
@@ -1013,9 +978,10 @@ class Application():
 		subs['nick'] = self.prefs["username"]
 		subs['pass'] = base64.b64decode(self.prefs["password"])
 		subs['comment'] = _('Comment')
-		subs['comments'] = _('comments')
+		subs['comments'] = _('reviews')
 		subs['send'] = _('Send')
-		subs['loading_comments'] = _('Loading comments...')
+		subs['loading_comments'] = _('Loading reviews...')
+		subs['reviews'] = _('Reviews')
 		a = package.name.split('-')
 		c = []
 		for b in a:
@@ -1040,21 +1006,12 @@ class Application():
 		else:
 			subs['website'] = ""
 
-		direction = gtk.widget_get_default_direction()
-	        if direction ==  gtk.TEXT_DIR_RTL:
-	            subs['text_direction'] = 'DIR="RTL"'
-	        elif direction ==  gtk.TEXT_DIR_LTR:
-	            subs['text_direction'] = 'DIR="LTR"'
-
 		subs['remove_button_label'] = _("Remove")
 		subs['install_button_label'] = _("Install")
-		subs['update_button_label'] = _("Update")
 
 		if package.pkg.is_installed:
 			subs['version'] = package.pkg.installed.version
 			subs['action'] = 'remove'
-			if package.pkg.candidate.version > package.pkg.installed.version:
-				subs['action'] = 'update'
 		else:
 			subs['version'] = package.pkg.candidate.version
 			subs['action'] = 'install'
@@ -1062,13 +1019,10 @@ class Application():
 		template = open("/usr/lib/tuquito/tuquito-software-manager/data/templates/PackageView.html").read()
 		html = string.Template(template).safe_substitute(subs)
 		self.packageBrowser.load_html_string(html, "file:/")
-
 		# Update the navigation bar
 		self.navigation_bar.add_with_id(subs['appname'], self.navigate, self.NAVIGATION_ITEM, package)
 
-if __name__ == '__main__':
-	if not os.path.exists(home + '/.tuquito/tuquito-software-manager/'):
-		os.system('mkdir -p ' + home + '/.tuquito/tuquito-software-manager/')
-	model = Classes.Model()
+if __name__ == "__main__":
+	os.system("mkdir -p " + home + "/.tuquito/tuquito-software-manager/")
 	Application()
 	gtk.main()

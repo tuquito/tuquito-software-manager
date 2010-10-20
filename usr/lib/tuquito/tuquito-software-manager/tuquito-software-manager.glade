@@ -8,11 +8,8 @@
     <property name="default_height">500</property>
     <child>
       <widget class="GtkVBox" id="vbox1">
-        <property name="visible">True</property>
         <child>
-          <widget class="GtkMenuBar" id="menubar1">
-            <property name="visible">True</property>
-          </widget>
+          <widget class="GtkMenuBar" id="menubar1"/>
           <packing>
             <property name="expand">False</property>
             <property name="position">0</property>
@@ -20,10 +17,8 @@
         </child>
         <child>
           <widget class="GtkVBox" id="vbox4">
-            <property name="visible">True</property>
             <child>
               <widget class="GtkVBox" id="toolbar">
-                <property name="visible">True</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -35,11 +30,9 @@
             </child>
             <child>
               <widget class="GtkNotebook" id="notebook1">
-                <property name="visible">True</property>
                 <property name="show_tabs">False</property>
                 <child>
                   <widget class="GtkScrolledWindow" id="scrolled_categories">
-                    <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hscrollbar_policy">automatic</property>
                     <property name="vscrollbar_policy">automatic</property>
@@ -96,6 +89,9 @@
                       <widget class="GtkTreeView" id="tree_applications">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="headers_visible">False</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="rules_hint">True</property>
                       </widget>
                     </child>
                   </widget>
@@ -201,6 +197,9 @@
                       <widget class="GtkTreeView" id="tree_search">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="headers_visible">False</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="rules_hint">True</property>
                       </widget>
                     </child>
                   </widget>
@@ -211,10 +210,10 @@
                 <child>
                   <widget class="GtkLabel" id="label1">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Transactions</property>
+                    <property name="label" translatable="yes">Search</property>
                   </widget>
                   <packing>
-                    <property name="position">7</property>
+                    <property name="position">6</property>
                     <property name="tab_fill">False</property>
                     <property name="type">tab</property>
                   </packing>
@@ -230,6 +229,7 @@
                       </widget>
                       <packing>
                         <property name="expand">False</property>
+                        <property name="padding">2</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -244,6 +244,9 @@
                           <widget class="GtkTreeView" id="tree_transactions">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="headers_visible">False</property>
+                            <property name="headers_clickable">False</property>
+                            <property name="rules_hint">True</property>
                           </widget>
                         </child>
                       </widget>
@@ -259,7 +262,7 @@
                 <child>
                   <widget class="GtkLabel" id="label2">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Search</property>
+                    <property name="label" translatable="yes">Transactions</property>
                   </widget>
                   <packing>
                     <property name="position">7</property>
@@ -279,10 +282,10 @@
         </child>
         <child>
           <widget class="GtkButton" id="button_transactions">
-            <property name="can_focus">True</property>
+            <property name="can_focus">False</property>
             <property name="receives_default">True</property>
             <child>
-              <widget class="GtkProgressBar" id="progressbar1"/>
+              <widget class="GtkProgressBar" id="progressbar"/>
             </child>
           </widget>
           <packing>
