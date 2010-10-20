@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
- Gestor de programas 1.1
+ Gestor de programas 1.2
  Copyright (C) 2010
  Author: Mario Colque <mario@tuquito.org.ar>
  Tuquito Team! - www.tuquito.org.ar
@@ -30,7 +30,6 @@ import string
 import StringIO
 import time
 import ConfigParser
-import urllib2
 import apt
 import aptdaemon
 from aptdaemon import client
