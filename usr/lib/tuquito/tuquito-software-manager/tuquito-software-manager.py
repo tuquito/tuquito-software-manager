@@ -19,7 +19,6 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 """
 
-import Classes
 import sys, os, commands
 import gtk
 import gtk.glade
