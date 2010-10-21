@@ -1,3 +1,9 @@
+tuquito-software-manager (1.2-1) maverick; urgency=low
+
+  * new URL in login window
+
+ -- Mario Colque <mario@tuquito.org.ar>  Wed, 20 Oct 2010 21:36:50 -0300
+
 tuquito-software-manager (1.2) maverick; urgency=low
 
   * new apt client
