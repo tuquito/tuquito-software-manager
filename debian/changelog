@@ -1,3 +1,10 @@
+tuquito-software-manager (1.2-2) maverick; urgency=low
+
+  * Class remove
+  * new translations
+
+ -- Mario Colque <mario@tuquito.org.ar>  Wed, 20 Oct 2010 23:00:07 -0300
+
 tuquito-software-manager (1.2-1) maverick; urgency=low
 
   * new URL in login window
