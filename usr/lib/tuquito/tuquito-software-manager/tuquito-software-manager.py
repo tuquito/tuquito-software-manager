@@ -60,6 +60,18 @@ gtk.gdk.threads_init()
 global shutdown_flag
 shutdown_flag = False
 
+class Splash(threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
+		gladefile = "/usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.glade"
+		wTree = gtk.glade.XML(gladefile, "welcome")
+		self.window = wTree.get_widget("welcome")
+
+	def run(self):
+		self.window.show_all()
+		while gtk.events_pending():
+			gtk.main_iteration()
+
 class TransactionLoop(threading.Thread):
 	def __init__(self, application, packages, wTree):
 		threading.Thread.__init__(self)
@@ -408,6 +420,7 @@ class Application():
 
 		wTree.get_widget("main_window").show_all()
 		wTree.get_widget("button_transactions").hide()
+		splash.window.hide()
 
 	def on_search_terms_changed(self, searchentry, terms):
 		if terms != "":
@@ -1022,5 +1035,7 @@ class Application():
 
 if __name__ == "__main__":
 	os.system("mkdir -p " + home + "/.tuquito/tuquito-software-manager/")
+	splash = Splash()
+	splash.start()
 	Application()
 	gtk.main()

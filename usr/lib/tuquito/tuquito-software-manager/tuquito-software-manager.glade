@@ -465,4 +465,19 @@
       </widget>
     </child>
   </widget>
+  <widget class="GtkWindow" id="welcome">
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-always</property>
+    <property name="default_width">420</property>
+    <property name="default_height">180</property>
+    <property name="icon">logo.svg</property>
+    <property name="type_hint">splashscreen</property>
+    <child>
+      <widget class="GtkImage" id="image1">
+        <property name="visible">True</property>
+        <property name="pixbuf">/usr/lib/tuquito/tuquito-software-manager/data/splash.png</property>
+      </widget>
+    </child>
+  </widget>
 </glade-interface>
