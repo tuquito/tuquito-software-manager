@@ -12,7 +12,7 @@
 	document.onselectstart = new Function("return false");
 	function getData(name, callback) {
 		var yql = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/rating.php?name='+name+'"')+'&format=xml&callback=?';
-		$.getJSON( yql, cbFunc );
+		$.getJSON(yql, cbFunc);
 		var time = setTimeout(function(){
 			$("#loading").html('<div id="error">$timeout_error [<a href="#" onclick="$(\'#whyr\').fadeIn();return false;">?</a>]</div><div id="whyr" class="hidden">$why</div>').fadeIn();
 		},10000);
@@ -32,7 +32,7 @@
 
 	function getReview(name, callback) {
 		var yql = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/comment.php?name='+name+'"')+'&format=xml&callback=?';
-		$.getJSON( yql, cbFunc );
+		$.getJSON(yql, cbFunc);
 		var time = setTimeout(function(){
 			$("#loadingr").html('<div id="error">$timeout_error [<a href="#" onclick="$(\'#whyr\').fadeIn();return false;">?</a>]</div><div id="whyr" class="hidden">$why</div>').fadeIn();
 		},10000);
@@ -100,15 +100,15 @@
 		$("#comment_text").attr("disabled", "disabled");
 		$("#comment_error").html('<img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif" id="load_form">');
 		var yql = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/comment.php?name=$pkgname&nick=$nick&pass=$pass&c='+comment_crypt+'"')+'&format=xml&callback=?';
-		$.getJSON( yql, cbFunc );
-		var time = setTimeout(function (){
+		$.getJSON(yql, cbFunc);
+		var time = setTimeout(function(){
 			$("#comment_error").html('<span id="error">$timeout_error</span>').fadeIn();
 		},10000);
 
 		function cbFunc(data) {
 			clearTimeout(time);
 			var nick_crypt = hex_md5("$nick");
-			if ( data.results[0] ) {
+			if (data.results[0]) {
 				data = data.results[0].replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
 				data = data.replace(/<body>[\s\S]*?<p>/gi, '');
 				data = data.replace(/<\/p>[\s\S]*?<\/body>/gi, '');

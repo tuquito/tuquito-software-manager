@@ -543,6 +543,22 @@ class Application():
 		wTree.get_widget("save_button").connect("clicked", self.update_account_info, wTree)
 		wTree.get_widget("window_account").show_all()
 
+	def show_account_message(self):
+		gladefile = "/usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.glade"
+		wTree = gtk.glade.XML(gladefile, "account_message")
+		wTree.get_widget("account_message").set_title(_("Message"))
+		wTree.get_widget("label1").set_markup("<big><b>You need a user account</b></big>")
+		wTree.get_widget("label2").set_markup("To comment, you need to be registered.\nIf you already have an account just enter your data in: <b>Edit > Account information</b>.\nWhat want you do?")
+		wTree.get_widget("label3").set_label("I'm not registered but want do it.")
+		wTree.get_widget("label4").set_label("I have an account, I will add my data.")
+		wTree.get_widget("linkbutton1").connect("clicked", self.close_window, wTree.get_widget("account_message"))
+		wTree.get_widget("button2").connect("clicked", self.add_data_account, wTree.get_widget("account_message"))
+		wTree.get_widget("account_message").show_all()
+
+	def add_data_account(self, widget, window):
+		self.close_window(widget, window)
+		self.open_account_info(widget)
+
 	def close_window(self, widget, window):
 		window.hide()
 
@@ -953,6 +969,9 @@ class Application():
 		return False
 
 	def show_package(self, package):
+		account_file = os.path.join(home, '.tuquito/tuquito-software-manager/account.conf')
+		if not os.path.exists(account_file):
+			self.show_account_message()
 		theme = gtk.icon_theme_get_default()
 		self.current_package = package
 		if theme.has_icon(package.pkg.name):
@@ -1002,6 +1021,7 @@ class Application():
 		subs['description'] = package.pkg.candidate.description
 		subs['description'] = subs['description'].replace('\n','<br>\n')
 		subs['summary'] = package.pkg.candidate.summary.capitalize()
+		subs['why'] = _('This is due to possible problems with your Internet connection.')
 
 		strSize = str(package.pkg.candidate.size) + _("B")
 		if package.pkg.candidate.size >= 1000:
