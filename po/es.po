@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tuquito-software-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-20 22:58-0300\n"
+"POT-Creation-Date: 2010-10-22 21:28-0300\n"
 "PO-Revision-Date: 2010-06-30 20:48-0300\n"
 "Last-Translator: Mario Colque <mario@tuquito.org.ar>\n"
 "Language-Team: Spanish\n"
@@ -27,7 +27,7 @@ msgid "Removing %s"
 msgstr "Eliminando %s"
 
 #: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:45
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:265
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:277
 msgid "Software Manager"
 msgstr "Gestor de programas"
 
@@ -35,491 +35,523 @@ msgstr "Gestor de programas"
 msgid "Install new applications"
 msgstr "Instalar nuevas aplicaciones"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:95
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:107
 #, python-format
 msgid "%s (running in the background)"
 msgstr "%s (ejecutándose en segundo plano)"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:158
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:163
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:170
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:175
 #, python-format
 msgid "%d ongoing actions"
 msgstr "%d acciones en curso"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:160
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:172
 #, python-format
 msgid "%d ongoing action"
 msgstr "%d acción en curso"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:191
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
 #, python-format
 msgid "Cancel the task: %s"
 msgstr "Cancelar la tarea: %s"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Setting up"
 msgstr "Configurando"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Waiting"
 msgstr "Esperando"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Waiting for medium"
 msgstr "Esperando el medio"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Waiting for config file prompt"
 msgstr "Esperando por el diálogo de configuración de archivo"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Waiting for lock"
 msgstr "Esperando para bloquear"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Running"
 msgstr "Ejecutando"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Loading cache"
 msgstr "Cargando caché"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Downloading"
 msgstr "Descargando"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Committing"
 msgstr "Aplicando"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Cleaning up"
 msgstr "Limpiando"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Resolving dependencies"
 msgstr "Resolviendo dependencias"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Finished"
 msgstr "Finalizado"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:203
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:215
 msgid "Cancelling"
 msgstr "Cancelando"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "No role set"
 msgstr "No se han asignado roles"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Installing package"
 msgstr "Instalando paquete"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Installing file"
 msgstr "Instalando archivo"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Upgrading package"
 msgstr "Actualiazando paquete"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Upgrading system"
 msgstr "Actualizando el sistema"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Updating cache"
 msgstr "Actualizando caché"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Removing package"
 msgstr "Eliminando paquete"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Committing package"
 msgstr "Empaquetando paquete"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Adding vendor key file"
 msgstr "Agregando "
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Removing vendor key"
 msgstr "Eliminando"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Adding repository"
 msgstr "Agregando repositorio"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Adding vendor key from keyserver"
 msgstr "Agregando clave desde el servidor de claves"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Enabling distribution component"
 msgstr "Habilitando componente de la distribución"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Fixing broken dependencies"
 msgstr "Resolviendo dependencias rotas"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:211
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:223
 msgid "Fixing incomplete installations"
 msgstr "Resolviendo instalaciones incompletas"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:276
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:288
 msgid "_File"
 msgstr "_Archivo"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:280
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:292
 msgid "Close"
 msgstr "Cerrar"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:284
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:296
 msgid "_Edit"
 msgstr "_Editar"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:288
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:300
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:292
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:304
 msgid "Search in packages summary (slower search)"
 msgstr "Buscar en los paquetes de la recopilación (búsqueda más lenta)"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:296
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:308
 msgid "Search in packages description (even slower search)"
 msgstr "Buscar en la descripción de los paquetes (búsqueda aún más lenta)"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:300
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:312
 msgid "Open links using the web browser"
 msgstr "Abrir enlaces usando el navegador web"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:311
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:520
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:323
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:533
 msgid "Account information"
 msgstr "Información de la cuenta"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:318
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:509
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:511
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:330
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:522
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:524
 msgid "Software sources"
 msgstr "Orígenes de software"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:322
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:334
 msgid "_View"
 msgstr "_Ver"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:326
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:338
 msgid "Available packages"
 msgstr "Paquetes disponibles"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:330
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:342
 msgid "Installed packages"
 msgstr "Paquetes instalados"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:337
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:349
 msgid "_Help"
 msgstr "_Ayuda"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:341
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:353
 msgid "About"
 msgstr "Acerca de"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:372
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:382
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:692
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:384
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:394
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:721
 msgid "Categories"
 msgstr "Categorías"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:373
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:383
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:385
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:395
 msgid "Select a category..."
 msgstr "Seleccione una categoría..."
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:405
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:417
 msgid "Active tasks:"
 msgstr "Tareas activas:"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:521
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:534
 msgid "Your community account"
 msgstr "Tu cuenta en la comunidad"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:523
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:536
 msgid "Enter your account info to post comments"
 msgstr "Escribe la información de tu cuenta para enviar comentarios"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:525
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:538
 msgid "Username:"
 msgstr "Usuario:"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:526
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:539
 msgid "Password:"
 msgstr "Contraseña:"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:560
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:549
+msgid "Message"
+msgstr "Mensaje"
+
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:550
+msgid "<big><b>You need a user account</b></big>"
+msgstr "<big><b>Necesitas una cuenta de usuario</b></big>"
+
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:551
+msgid ""
+"To comment, you need to be registered.\n"
+"If you already have an account just enter your data in: <b>Edit > Account "
+"information</b>.\n"
+"What want you do?"
+msgstr ""
+"Para comentar, necesita estar registrado.\n"
+"Si ya tiene una cuenta, introduzca sus datos en: <b>Editar > Información de "
+"la cuenta</b>.\n"
+"¿Qué desea hacer?"
+
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:552
+msgid "I'm not registered but want do it"
+msgstr "No estoy registrado pero quiero hacerlo"
+
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:553
+msgid "I have an account, I will add my data"
+msgstr "Tengo una cuenta, voy a agregar mis datos"
+
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:589
 msgid "Icon"
 msgstr "Icono"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:567
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:596
 msgid "Application"
 msgstr "Aplicación"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:583
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:612
 msgid "Task"
 msgstr "Tarea"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:586
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:615
 msgid "Status"
 msgstr "Estado"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:589
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:618
 msgid "Progress"
 msgstr "Progreso"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:655
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1003
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:684
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1036
 msgid "Website"
 msgstr "Sitio web"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:662
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:691
 msgid "Comments"
 msgstr "Comentarios"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:693
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:722
 msgid "Featured"
 msgstr "Destacados"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:696
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:725
 msgid "Accessories"
 msgstr "Accesorios"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:698
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:727
 msgid "Access"
 msgstr "Acceso Universal"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:701
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:730
 msgid "Education"
 msgstr "Educación"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:704
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:733
 msgid "Fonts"
 msgstr "Tipografías"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:707
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:736
 msgid "Games"
 msgstr "Juegos"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:708
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:737
 msgid "Board games"
 msgstr "Juegos de mesa"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:710
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:739
 msgid "First-person shooters"
 msgstr "Tiradores en primera persona"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:712
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:741
 msgid "Real-time strategy"
 msgstr "Estrategia en tiempo real"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:714
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:743
 msgid "Turn-based strategy"
 msgstr "Estrategia por turnos"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:716
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:745
 msgid "Emulators"
 msgstr "Emuladores"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:718
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:747
 msgid "Simulation and racing"
 msgstr "Simulación y carreras"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:721
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:750
 msgid "Graphics"
 msgstr "Gráficos"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:723
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:752
 msgid "3D"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:725
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:754
 msgid "Drawing"
 msgstr "Dibujo"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:727
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:756
 msgid "Photography"
 msgstr "Fotografía"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:729
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:758
 msgid "Publishing"
 msgstr "Publicación"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:731
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:760
 msgid "Scanning"
 msgstr "Escanear"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:733
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:762
 msgid "Viewers"
 msgstr "Visores"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:736
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:765
 msgid "Internet"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:737
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:766
 msgid "Web"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:739
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:768
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:741
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:770
 msgid "Chat"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:743
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:772
 msgid "File sharing"
 msgstr "Compartidores de archivos"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:746
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:775
 msgid "Office"
 msgstr "Oficina"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:747
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:776
 msgid "Science"
 msgstr "Ciencia"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:749
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:778
 msgid "Sound and video"
 msgstr "Sonido y vídeo"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:750
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:779
 msgid "Players"
 msgstr "Reproductores"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:752
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:781
 msgid "Editors"
 msgstr "Editores"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:754
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:783
 msgid "Multimedia"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:757
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:786
 msgid "Themes and tweaks"
 msgstr "Temas y ajustes"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:760
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:789
 msgid "System tools"
 msgstr "Herramientas del sistema"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:763
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:792
 msgid "Programming"
 msgstr "Programación"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:765
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:794
 msgid "Other"
 msgstr "Otros"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:832
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:861
 #, python-format
 msgid "%d packages"
 msgstr "%d paquetes"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:930
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:959
 msgid "Search results"
 msgstr "Resultados de búsqueda"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:964
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:996
 msgid "Version:"
 msgstr "Versión:"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:965
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:997
 msgid "Size:"
 msgstr "Tamaño:"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:966
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:998
 msgid "Loading score..."
 msgstr "Cargando puntaje..."
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:967
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:999
 msgid "votes"
 msgstr "votos"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:968
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1000
 msgid "Very bad"
 msgstr "Muy malo"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:969
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1001
 msgid "Not that bad"
 msgstr "No es tan malo"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:970
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1002
 msgid "Average"
 msgstr "Promedio"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:971
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1003
 msgid "Good"
 msgstr "Bueno"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:972
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1004
 msgid "Excellent"
 msgstr "Excelente"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:973
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1005
 msgid "Error loading data"
 msgstr "Error al cargar los datos"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:974
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1006
 msgid "Just now"
 msgstr "Justo ahora"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:975
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1007
 msgid "More..."
 msgstr "Más..."
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:978
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1010
 msgid "Comment"
 msgstr "Comentar"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:979
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1011
 msgid "reviews"
 msgstr "comentarios"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:980
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1012
 msgid "Send"
 msgstr "Enviar"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:981
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1013
 msgid "Loading reviews..."
 msgstr "Cargando comentarios..."
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:982
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1014
 msgid "Reviews"
 msgstr "Comentarios"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:993
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1024
+msgid "This is due to possible problems with your Internet connection."
+msgstr "Esto es debido a posibles problemas con su conexión a Internet."
+
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1026
 msgid "B"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:995
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1028
 msgid "KB"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:997
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1030
 msgid "MB"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:999
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1032
 msgid "GB"
 msgstr ""
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1007
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1040
 msgid "Remove"
 msgstr "Eliminar"
 
-#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1008
+#: usr/lib/tuquito/tuquito-software-manager/tuquito-software-manager.py:1041
 msgid "Install"
 msgstr "Instalar"
