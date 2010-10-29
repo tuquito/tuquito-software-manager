@@ -548,7 +548,7 @@ class Application():
 		wTree = gtk.glade.XML(gladefile, "account_message")
 		wTree.get_widget("account_message").set_title(_("Message"))
 		wTree.get_widget("label1").set_markup(_("<big><b>You need a user account</b></big>"))
-		wTree.get_widget("label2").set_markup(_("To comment, you need to be registered.\nIf you already have an account just enter your data in: <b>Edit > Account information</b>.\nWhat want you do?"))
+		wTree.get_widget("label2").set_markup(_("To comment you need to be registered.\nIf you already have an account just enter your data in: <b>Edit > Account information</b>.\nWhat want you do?"))
 		wTree.get_widget("label3").set_label(_("I'm not registered but want do it"))
 		wTree.get_widget("label4").set_label(_("I have an account, I will add my data"))
 		wTree.get_widget("linkbutton1").connect("clicked", self.close_window, wTree.get_widget("account_message"))
@@ -651,10 +651,14 @@ class Application():
 				self.notebook.set_current_page(self.PAGE_WEBSITE)
 
 	def close_application(self, window, event=None, exit_code=0):
-		global shutdown_flag
-		shutdown_flag = True
-		gtk.main_quit()
-		sys.exit(exit_code)
+		if exit_code == 0:
+			pid = os.getpid()
+			os.system("kill -9 %d &" % pid)
+		else:
+			global shutdown_flag
+			shutdown_flag = True
+			gtk.main_quit()
+			sys.exit(exit_code)
 
 	def _on_load_finished(self, view, frame):
 		# Get the categories
@@ -701,7 +705,7 @@ class Application():
 		if title.startswith("call:"):
 			args_str = ""
 			args_list = []
-		    # try long form (with arguments) first
+			# try long form (with arguments) first
 			try:
 				(t,funcname,args_str) = title.split(":")
 			except ValueError:

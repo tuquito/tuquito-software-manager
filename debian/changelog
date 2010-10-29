@@ -1,3 +1,23 @@
+tuquito-software-manager (1.2-6) maverick; urgency=low
+
+  * new translations
+
+ -- Mario Colque <mario@tuquito.org.ar>  Fri, 29 Oct 2010 13:27:03 -0300
+
+tuquito-software-manager (1.2-5) maverick; urgency=low
+
+  * added apss icons
+
+ -- Mario Colque <mario@tuquito.org.ar>  Fri, 29 Oct 2010 13:21:40 -0300
+
+tuquito-software-manager (1.2-4) maverick; urgency=low
+
+  * loading div fixed
+  * close_app fuction optimized
+  * new translations
+
+ -- Mario Colque <mario@tuquito.org.ar>  Tue, 26 Oct 2010 13:50:02 -0300
+
 tuquito-software-manager (1.2-3) maverick; urgency=low
 
   * new splash

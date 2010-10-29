@@ -14,7 +14,7 @@
 		var yql = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/rating.php?name='+name+'"')+'&format=xml&callback=?';
 		$.getJSON(yql, cbFunc);
 		var time = setTimeout(function(){
-			$("#loading").html('<div id="error">$timeout_error [<a href="#" onclick="$(\'#whyr\').fadeIn();return false;">?</a>]</div><div id="whyr" class="hidden">$why</div>').fadeIn();
+			$("#loading").html('<div id="error">$timeout_error [<a href="#" onclick="$(\'#why\').fadeIn();return false;">?</a>]</div><div id="why" class="hidden">$why</div>').fadeIn();
 		},10000);
 
 		function cbFunc(data) {
@@ -245,8 +245,7 @@ a:hover { text-decoration: none; }
 }
 
 #loading {
-	width: 150px;
-	text-align: center;
+	text-align: left;
 	height: 30px;
 }
 
