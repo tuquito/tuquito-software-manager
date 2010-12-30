@@ -1,3 +1,9 @@
+tuquito-software-manager (1.2-9) maverick; urgency=low
+
+  * fixed permissions
+
+ -- Mario Colque <mario@tuquito.org.ar>  Thu, 30 Dec 2010 20:04:30 -0300
+
 tuquito-software-manager (1.2-8) maverick; urgency=low
 
   * added final language pt
