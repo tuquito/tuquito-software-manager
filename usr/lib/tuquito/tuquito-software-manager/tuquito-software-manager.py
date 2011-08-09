@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
- Gestor de programas 1.2
- Copyright (C) 2010
+ Gestor de programas 1.3
+ Copyright (C) 2011
  Author: Mario Colque <mario@tuquito.org.ar>
  Tuquito Team! - www.tuquito.org.ar
 
@@ -52,8 +52,12 @@ if architecture.find("x86_64") >= 0:
 	libc.prctl(15, 'softwareManager', 0, 0, 0)
 else:
 	import dl
-	libc = dl.open('/lib/libc.so.6')
-	libc.call('prctl', 15, 'softwareManager', 0, 0, 0)
+	if os.path.exists('/lib/libc.so.6'):
+		libc = dl.open('/lib/libc.so.6')
+		libc.call('prctl', 15, 'softwareManager', 0, 0, 0)
+	elif os.path.exists('/lib/i386-linux-gnu/libc.so.6'):
+		libc = dl.open('/lib/i386-linux-gnu/libc.so.6')
+		libc.call('prctl', 15, 'softwareManager', 0, 0, 0)
 
 gtk.gdk.threads_init()
 

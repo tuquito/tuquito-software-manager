@@ -1,278 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title></title>
-	<meta charset="UTF-8">
-	<script type="text/javascript" src="/usr/share/javascript/jquery/jquery.min.js"></script>
-	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/md5-min.js"></script>
-	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery-ui.custom.min.js"></script>
-	<script type="text/javascript" src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.ui.stars.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.ui.stars.min.css">
-	<script type="text/javascript">
-	document.onselectstart = new Function("return false");
-	function getData(name, callback) {
-		var yql = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/rating.php?name='+name+'"')+'&format=xml&callback=?';
-		$.getJSON(yql, cbFunc);
-		var time = setTimeout(function(){
-			$("#loading").html('<div id="error">$timeout_error [<a href="#" onclick="$(\'#why\').fadeIn();return false;">?</a>]</div><div id="why" class="hidden">$why</div>').fadeIn();
-		},10000);
+    <title></title>
+    <meta charset="UTF-8">
+    <script src="/usr/share/javascript/jquery/jquery.min.js"></script>
+    <script src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery-ui.custom.min.js"></script>
+    <script src="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.ui.stars.min.js"></script>
+    <link rel="stylesheet" href="/usr/lib/tuquito/tuquito-software-manager/data/templates/jquery.ui.stars.min.css">
+    <script>
+    function getReview(name, callback) {
+        yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/comment.php?name=' + name + '"')+'&format=xml&callback=?';
+        var time = setTimeout(function(){
+            $("#loadingr").html('<div id="error">$timeout_error [<a href="#" onclick="$(\'#whyr\').fadeIn();return false;">?</a>]</div><div id="whyr" class="hidden">$why</div>').fadeIn();
+        },10000);
+        $.getJSON(yql, function cbFunc(data) {
+            clearTimeout(time);
+            if (data.results[0]) {
+                data = data.results[0].replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+                data = data.replace(/##More#/gi, '$more');
+                data = data.replace(/##Nick#/gi, '$nick');
+                data = data.replace(/##Comment#/gi, '$comment');
+                data = data.replace(/##Comments#/gi, '$comments');
+                data = data.replace(/##Send#/gi, '$send');
+                if (typeof callback === 'function')
+                    callback(data);
+            }
+            else throw new Error('Nothing returned from getJSON.');
+        });
+    }
 
-		function cbFunc(data) {
-			clearTimeout(time);
-			if (data.results[0]) {
-				data = data.results[0].replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-				data = data.replace(/<body>[\s\S]*?<p>/gi, '');
-				data = data.replace(/<\/p>[\s\S]*?<\/body>/gi, '');
-				if (typeof callback === 'function')
-					callback(data);
-			}
-			else throw new Error('Nothing returned from getJSON.');
-		}
-	}
+    $(function() {
+        if ("$action" == "install") { //no esta instalado
+            $("#install").show();
+            $("#remove").hide();
+        } else { // esta instalado
+            $("#install").hide();
+            $("#remove").show();
+        }
 
-	function getReview(name, callback) {
-		var yql = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/comment.php?name='+name+'"')+'&format=xml&callback=?';
-		$.getJSON(yql, cbFunc);
-		var time = setTimeout(function(){
-			$("#loadingr").html('<div id="error">$timeout_error [<a href="#" onclick="$(\'#whyr\').fadeIn();return false;">?</a>]</div><div id="whyr" class="hidden">$why</div>').fadeIn();
-		},10000);
+        var time = setTimeout(function() {
+            $("#loading").html('<div id="error">$timeout_error [<a onclick="$(\'#why\').fadeIn();return false;">?</a>]</div><div id="why" class="hidden">$why</div>').fadeIn();
+        },10000);
 
-		function cbFunc(data) {
-			clearTimeout(time);
-			if (data.results[0]) {
-				data = data.results[0].replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-				data = data.replace(/##More#/gi, '$more');
-				data = data.replace(/##Nick#/gi, '$nick');
-				data = data.replace(/##Comment#/gi, '$comment');
-				data = data.replace(/##Comments#/gi, '$comments');
-				data = data.replace(/##Send#/gi, '$send');
-				if (typeof callback === 'function')
-					callback(data);
-			}
-			else throw new Error('Nothing returned from getJSON.');
-		}
-	}
+        $.getJSON("http://apps.tuquito.org.ar/rating.php", {name: "$pkgname"}, function(data) {
+            clearTimeout(time);
+            score = data.rating;
+            rates = data.votes;
+            curval = data.average;
+            $("#loading").hide();
+            $("#ratings").children().not(":radio").hide();
+            $caption = $("<span>");
+            $("#ratings").stars({
+                oneVoteOnly: true,
+                showTitles: true,
+                captionEl: $caption,
+                callback: function(ui, type, value) {
+                    $.getJSON("http://apps.tuquito.org.ar/rating.php", {rating: value, name: "$pkgname"});
+                    $("#rates").text(rates + 1);
+                    curval = (score + parseInt(value))/(rates + 1)
+                    $("#ratings").stars("select", parseInt(curval)).fadeIn();
+                }
+            }).append('<br>(<span id="rates">' + rates + '</span> $votes) ');
+            $caption.appendTo("#ratings");
+            $("#ratings").stars("select", parseInt(curval)).fadeIn();
+        });
 
-	$(document).ready(function() {
-		if ("$action" == "install") { //no esta instalado
-			$("#install").show();
-			$("#remove").hide();
-		} else { // esta instalado
-			$("#install").hide();
-			$("#remove").show();
-		}
+        getReview("$pkgname", function(results) {
+            $("#loadingr").hide();
+            $("#data").html(results).fadeIn();
+            $("img.avatar").error(function() {
+                $(this).attr("src", "http://tuquito.org.ar/uploads/avatar/nn.png");
+            });
+        });
+    });
 
-		getData('$pkgname', function(results) {
-			value = results.split('|');
-			score = parseInt(value[0]);
-			rates = parseInt(value[1]);
-			curval = parseInt(value[2]);
-			$("#loading").hide();
-			$("#ratings").children().not(":radio").hide();
-			$caption = $("<span>");
-			$("#ratings").stars({
-				oneVoteOnly: true,
-				showTitles: true,
-				captionEl: $caption,
-				callback: function(ui, type, value) {
-					$.post("http://apps.tuquito.org.ar/rating.php", {rating: value, name: "$pkgname"});
-					$("#rates").text(rates+1);
-					curval = (score+parseInt(value))/(rates+1)
-					$("#ratings").stars("select", parseInt(curval)).fadeIn();
-				}
-			}).append('<br>(<span id="rates">'+rates+'</span> $votes) ');
-			$caption.appendTo("#ratings");
-			$("#ratings").stars("select", parseInt(curval)).fadeIn();
-		})
-
-		getReview("$pkgname", function(results) {
-			$("#loadingr").hide();
-			$("#data").html(results).fadeIn();
-		})
-	});
-
-	function sendComment() {
-		var comment = $("#comment_text").val();
-		var comment = comment.replace(/^\s+/g, "").replace(/\s+$/g, "");
-		var comment_crypt = comment.replace(/ /gi, "%20")
-		if (comment == "")
-			return false;
-		$("#comment_text").attr("disabled", "disabled");
-		$("#comment_error").html('<img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif" id="load_form">');
-		var yql = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent('select * from html where url="http://apps.tuquito.org.ar/comment.php?name=$pkgname&nick=$nick&pass=$pass&c='+comment_crypt+'"')+'&format=xml&callback=?';
-		$.getJSON(yql, cbFunc);
-		var time = setTimeout(function(){
-			$("#comment_error").html('<span id="error">$timeout_error</span>').fadeIn();
-		},10000);
-
-		function cbFunc(data) {
-			clearTimeout(time);
-			var nick_crypt = hex_md5("$nick");
-			if (data.results[0]) {
-				data = data.results[0].replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-				data = data.replace(/<body>[\s\S]*?<p>/gi, '');
-				data = data.replace(/<\/p>[\s\S]*?<\/body>/gi, '');
-				if (data == "error") {
-					$("#load_form").remove();
-					$("#comment_error").html('<span id="error">$timeout_error</span>').fadeIn();
-				} else {
-					$("#comment_form").fadeOut();
-					$("#comments").prepend('<div id="comment" class="new_comment"><img onerror="this.src=\'http://tuquito.org.ar/uploads/avatar/nn.png\'" class="avatar" src="http://tuquito.org.ar/uploads/avatar/'+nick_crypt+'.jpg" width="40"><span id="date"><b>$nick</b> · <small>$just_now</small></span><div id="text">'+comment+'</div><div id="fix"></div></div>');
-				}
-			} else throw new Error('Nothing returned from getJSON.');
-		}
-	}
-
-	function changeTitle(title) {
-		document.title = title;
-	}
-	function button_button_clicked() {
-		changeTitle("call:on_button_clicked");
-		$('.btn').fadeOut();
-	}
-	function action_website_clicked() {
-		changeTitle("call:on_website_clicked");
-		changeTitle("nop");
-	}
-	function more_comments_clicked() {
-		changeTitle("call:on_comment_clicked");
-		changeTitle("nop");
-		return false;
-	}
+    function sendComment() {
+        comment = $("#comment_text").val();
+        comment = comment.replace(/^\s+/g, "").replace(/\s+$/g, "");
+        if (comment == "")
+            return false;
+        $("#comment_text").attr("disabled", "disabled");
+        $("#comment_error").html('<img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif" id="load_form">');
+        var time = setTimeout(function() {
+            $("#comment_error").html('<span id="error">$timeout_error</span>').fadeIn();
+        },10000);
+        $.getJSON("http://apps.tuquito.org.ar/comment.php",{
+            name: "$pkgname",
+            nick: "$nick",
+            pass: "$pass",
+            c: comment
+        }, function cbFunc(data) {
+            clearTimeout(time);
+            if (data.error) {
+                $("#load_form").remove();
+                $("#comment_error").html('<span id="error">$timeout_error</span>').fadeIn();
+            } else {
+                counter = $("p#counter > span");
+                comments = parseInt(counter.text());
+                counter.text(comments + 1);
+                $("#comment_form").hide();
+                $("#comments").prepend('<div id="comment" class="new_comment"><img onerror="this.src=\'http://tuquito.org.ar/uploads/avatar/nn.png\'" class="avatar" src="' + data.avatar + '" width="40"><span id="date"><b>$nick</b> · <small>$just_now</small></span><div id="text">' + data.comment + '</div><div id="fix"></div></div>');
+            }
+        });
+    }
+    function changeTitle(title) {
+        document.title = title;
+    }
+    function button_button_clicked() {
+        changeTitle("call:on_button_clicked");
+        $('.btn').fadeOut();
+    }
+    function action_website_clicked() {
+        changeTitle("call:on_website_clicked");
+        changeTitle("nop");
+    }
+    function more_comments_clicked() {
+        changeTitle("call:on_comment_clicked");
+        changeTitle("nop");
+        return false;
+    }
 </script>
 
 <style type="text/css">
+* {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+}
 .hidden { display: none; }
 html {
-	background: url('/usr/lib/tuquito/tuquito-software-manager/data/bg.png') repeat-x top;
-	font-family: "Ubuntu", Lucida Sans Unicode, Arial, Helvetica, Sans-Serif;
-	height: 100%;
-	color: #4B4B4B;
-	padding: 0;
-	margin: 0;
-	text-shadow: white 1px 1px 0px;
+    background: url('/usr/lib/tuquito/tuquito-software-manager/data/bg.png') repeat-x top;
+    font-family: "Ubuntu", Lucida Sans Unicode, Arial, Helvetica, Sans-Serif;
+    height: 100%;
+    color: #4B4B4B;
+    padding: 0;
+    margin: 0;
+    text-shadow: white 1px 1px 0px;
 }
-
 body {
-	background: url('/usr/lib/tuquito/tuquito-software-manager/data/clouds.png') top right no-repeat;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	margin: 0;
+    background: url('/usr/lib/tuquito/tuquito-software-manager/data/clouds.png') top right no-repeat;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    margin: 0;
 }
-
 h1 {
-	font-size: 25px;
-	margin: 18px 0 0.1em 90px;
-	padding-left: 10px;
+    font-size: 25px;
+    margin: 18px 0 15px 90px;
+    padding-left: 10px;
 }
-
 h2 {
-	font-size: 80%;
-	margin: 0 0 0.3em 90px;
-	font-weight: normal;
+    font-size: 80%;
+    margin: 0 0 0.3em 90px;
+    font-weight: normal;
 }
-
 #icon {
-	width: 72px;
-	height: 72px;
-	z-index: -1;
-	position: absolute;
-	-webkit-background-clip: border-box;
-	-webkit-background-origin: border-box;
-	left: 10px;
-	top: 10px;
+    width: 72px;
+    height: 72px;
+    z-index: -1;
+    position: absolute;
+    -webkit-background-clip: border-box;
+    -webkit-background-origin: border-box;
+    left: 10px;
+    top: 10px;
 }
-
 .btn {
-	display:block;
-	height: 42px;
-	width: 122px;
-	font-size: 14px;
-	font-style: normal;
-	font-weight: bold;
-	white-space: nowrap;
-	padding: 0px !important;
-	line-height: 43px;
-	text-decoration: none !important;
-	color: #F5FAF0 !important;
-	text-align: center;
-	float: right;
-	opacity: 0.7;
-	position: fixed;
-	right: 10px;
-	top: 10px;
-	text-shadow: black 1px 1px 0px;
-	z-index: 100;
+    display:block;
+    height: 42px;
+    width: 122px;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: bold;
+    white-space: nowrap;
+    padding: 0px !important;
+    line-height: 43px;
+    text-decoration: none !important;
+    color: #F5FAF0 !important;
+    text-align: center;
+    float: right;
+    opacity: 0.7;
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    text-shadow: black 1px 1px 0px;
+    z-index: 100;
 }
-
 .btn:hover { opacity: 1; }
-
 #install { background: url('/usr/lib/tuquito/tuquito-software-manager/data/install.png') top left no-repeat; }
-
 #remove { background: url('/usr/lib/tuquito/tuquito-software-manager/data/uninstall.png') top left no-repeat; }
-
-a { color: #294f88; }
-
-a:hover { text-decoration: none; }
-
+a {
+    color: #294f88;
+    cursor: pointer;
+    text-decoration: none;
+    outline: 0;
+}
+a:hover { text-decoration: underline; }
 #content {
-	top: 100px;
-	position: absolute;
-	padding-left: 10px;
+    top: 100px;
+    position: absolute;
+    padding-left: 10px;
 }
-
 .data {
-	text-decoration: none;
-	padding: 0;
-	font-weight: normal;
-	font-style: normal;
-	letter-spacing: normal;
-	word-spacing: normal;
-	font-variant: normal;
-	font-variant: normal;
-	text-transform: none;
-	text-align: left;
-	text-indent: 0;
-	line-height: inherit;
-	font-size: 12px;
+    text-decoration: none;
+    padding: 0;
+    font-weight: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    word-spacing: normal;
+    font-variant: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-align: left;
+    text-indent: 0;
+    line-height: inherit;
+    font-size: 12px;
 }
-
 #description {
-	padding: 10px;
-	font-size: 13px;
+    padding: 10px;
+    font-size: 13px;
 }
-
 #loading {
-	text-align: left;
-	height: 30px;
+    text-align: left;
+    height: 30px;
 }
-
 #ratings { display: none; }
 
 /* Comments */
-#data { font-size: 12px; }
+#counter > span { font-weight: bold; }
 #comment {
-    clear: both;
     padding: 4px;
     display: block;
     border: 1px solid #D8DFEA;
-    border-radius: 6px;
-    margin: 0 20px 6px 10px;
+    border-radius: 3px;
+    margin: 0 20px 3px 10px;
 }
 #date {
     font-size: 12px;
     padding: 0;
 }
-#text {
+#text, #data {
     font-size: 11px;
-    padding: 0px !important;
+    padding: 0;
 }
 .a { background-color: #F1F4F8; }
 .new_comment {
     background-color: #FFFDED;
-    border: 1px solid #FFDD88 !important;
+    border: 1px solid #FFDD88;
 }
 #fix { clear: both;}
 img.avatar {
@@ -291,38 +264,38 @@ img.avatar {
     display: none;
     margin: 6px 10px;
 }
-
+#comment_text { -webkit-user-select: text; }
 #error { color: red; }
 </style>
 </head>
 <body>
-	<a href="javascript:button_button_clicked()" class="btn" id="install">$install_button_label</a>
-	<a href="javascript:button_button_clicked()" class="btn" id="remove">$remove_button_label</a>
-	<img id="icon" src="$icon">
-	<h1>$appname</h1>
-	<h2>$summary<br>$website <a href="#data">$reviews</a></h2>
-	<div id="content">
-		<div class="data">
-			<b>$txtVersion</b> $version ($pkgname)<br>
-			<b>$txtSize</b> $size<br>
-			<div id="loading">
-				<img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif"><br>$loading_txt
-			</div>
-			<form id="ratings">
-				<input type="radio" name="rate" value="1" title="$vbad" id="rate1"> <label for="rate1">$vbad</label>
-				<input type="radio" name="rate" value="2" title="$ntbad" id="rate2"> <label for="rate2">$ntbad</label>
-				<input type="radio" name="rate" value="3" title="$average" id="rate3"> <label for="rate3">$average</label>
-				<input type="radio" name="rate" value="4" title="$good" id="rate4"> <label for="rate4">$good</label>
-				<input type="radio" name="rate" value="5" title="$excellent" id="rate5"> <label for="rate5">$excellent</label>
-				<input type="submit" value="Rate it!">
-			</form>
-		</div>
-		<p id="description">$description</p>
-		<p id="data">
-		    <div id="loadingr">
-			    <img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif"><br>$loading_comments
-		    </div>
-		</p>
-	</div>
+    <a href="javascript:button_button_clicked()" class="btn" id="install">$install_button_label</a>
+    <a href="javascript:button_button_clicked()" class="btn" id="remove">$remove_button_label</a>
+    <img id="icon" src="$icon">
+    <h1>$appname</h1>
+    <h2>$summary<br>$website <a href="#data">$reviews</a></h2>
+    <div id="content">
+        <div class="data">
+            <b>$txtVersion</b> $version ($pkgname)<br>
+            <b>$txtSize</b> $size<br>
+            <div id="loading">
+                <img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif"><br>$loading_txt
+            </div>
+            <form id="ratings">
+                <input type="radio" name="rate" value="1" title="$vbad" id="rate1"> <label for="rate1">$vbad</label>
+                <input type="radio" name="rate" value="2" title="$ntbad" id="rate2"> <label for="rate2">$ntbad</label>
+                <input type="radio" name="rate" value="3" title="$average" id="rate3"> <label for="rate3">$average</label>
+                <input type="radio" name="rate" value="4" title="$good" id="rate4"> <label for="rate4">$good</label>
+                <input type="radio" name="rate" value="5" title="$excellent" id="rate5"> <label for="rate5">$excellent</label>
+                <input type="submit" value="Rate it!">
+            </form>
+        </div>
+        <p id="description">$description</p>
+        <p id="data">
+            <div id="loadingr">
+                <img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif"><br>$loading_comments
+            </div>
+        </p>
+    </div>
 </body>
 </html>

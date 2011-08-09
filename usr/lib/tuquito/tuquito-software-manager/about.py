@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
- Gestor de programas 1.2
- Copyright (C) 2010
+ Gestor de programas 1.3
+ Copyright (C) 2011
  Author: Mario Colque <mario@tuquito.org.ar>
  Tuquito Team! - www.tuquito.org.ar
 

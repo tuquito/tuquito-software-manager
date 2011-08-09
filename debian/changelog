@@ -1,3 +1,11 @@
+tuquito-software-manager (1.3-1) natty; urgency=low
+
+  * Pampa branch
+  * better HTML5 and CSS3 :D
+  * several improvements
+
+ -- Mario Colque <mario@tuquito.org.ar>  Tue, 09 Aug 2011 03:12:36 -0300
+
 tuquito-software-manager (1.2-9) maverick; urgency=low
 
   * fixed permissions
