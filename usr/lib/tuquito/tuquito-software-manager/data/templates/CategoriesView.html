@@ -10,7 +10,7 @@
         document.title = "nop";
     }
     function addCategory(name, num_packages, img) {
-        li = '<li id="" data-cant="' + num_packages + '" data-name="' + name + '"><img src="' + img + '"></li>';
+        li = '<li id="" data-cant="' + num_packages + '" data-name="' + name + '"><img src="' + img + '"><span>' + name + '</span></li>';
         $("ul").append(li);
         categoryCount++;
     }
@@ -18,12 +18,10 @@
         $("li").mouseenter(function() {
             name = $(this).data("name");
             cant = $(this).data("cant");
-            $("footer").html("<b>" + name + "</b> | " + cant).fadeIn();
+            $("footer").html(cant).fadeIn();
         }).mouseleave(function(){
             $("footer").text("$select").fadeIn();
-        });
-
-        $("li").click(function(){
+        }).click(function() {
             name = $(this).data("name");
             changeTitle("call:on_category_clicked:" + name);
         });
@@ -31,7 +29,8 @@
     function clearCategories() {
         document.getElementById("grid").innerHTML = "";
     }
-    var categoryCount = 0;
+    var
+    categoryCount = 0;
     </script>
     <style>
     * {
@@ -54,8 +53,8 @@
         margin: 0;
         padding-top: 50px;
     }
-    ul#grid { margin: 0 auto 0 auto; }
-    ul#grid li {
+    #grid { margin: 0 auto 0 auto; }
+    #grid li {
         display: inline-block;
         list-style: none outside;
         float: left;
@@ -66,13 +65,18 @@
         height: 90px;
         width: 90px;
     }
-    ul#grid li:hover  { cursor: pointer; }
-    ul#grid li img {
+    #grid li span {
+    	font-size: 11px;
+    	margin-top: 15px;
+    	display: block;
+    }
+    #grid li:hover { cursor: pointer }
+    #grid li img {
         -webkit-transition: all 0.18s ease;
         height: 42px;
         width: 42px;
     }
-    ul#grid li:hover img { -webkit-transform: scale(1.6); }
+    #grid li:hover img { -webkit-transform: scale(1.6) }
     footer {
         border-radius: 4px;
         color: white;

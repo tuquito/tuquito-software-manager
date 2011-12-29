@@ -126,7 +126,7 @@
     -webkit-user-select: none;
     -webkit-user-drag: none;
 }
-.hidden { display: none; }
+.hidden { display: none }
 html {
     background: url('/usr/lib/tuquito/tuquito-software-manager/data/bg.png') repeat-x top;
     font-family: "Ubuntu", Lucida Sans Unicode, Arial, Helvetica, Sans-Serif;
@@ -276,8 +276,11 @@ img.avatar {
     <h2>$summary<br>$website <a href="#data">$reviews</a></h2>
     <div id="content">
         <div class="data">
-            <b>$txtVersion</b> $version ($pkgname)<br>
-            <b>$txtSize</b> $size<br>
+            <p>
+            	<b>$txtVersion</b> $version ($pkgname)<br>
+	            <b>$txtSize</b> $sizeinfo<br>
+    	        <b>$txtImpact</b> $packagesinfo
+	        </p>
             <div id="loading">
                 <img src="/usr/lib/tuquito/tuquito-software-manager/data/loading.gif"><br>$loading_txt
             </div>

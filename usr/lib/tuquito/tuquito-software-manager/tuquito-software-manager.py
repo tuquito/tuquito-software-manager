@@ -936,7 +936,7 @@ class Application():
 			for term in termss:
 				aux = found
 				if term.strip() != '':
-					if term in package.pkg.name:
+					if term in package.pkg.name and not (package.pkg.name.endswith(":i386") or package.pkg.name.endswith(":amd64")):
 						found = True
 					else:
 						if package.pkg.candidate is not None:
@@ -998,11 +998,29 @@ class Application():
 			iconInfo = theme.lookup_icon("applications-other", 72, 0)
 			if iconInfo and os.path.exists(iconInfo.get_filename()):
 				icon = iconInfo.get_filename()
+
+		impacted_packages = []
+
+		cache = apt.Cache()
+		pkg = cache[package.name]
+		if package.pkg.is_installed:
+			pkg.mark_delete(True, True)
+		else:
+			pkg.mark_install()
+		changes = cache.get_changes()
+		for pkg in changes:
+			if pkg.is_installed:
+				impacted_packages.append(_("%s (removed)") % pkg.name)
+			else:
+				impacted_packages.append(_("%s (installed)") % pkg.name)
+
 		# Load package info
 		subs = {}
 		subs['icon'] = icon
 		subs['txtVersion'] = _("Version:")
 		subs['txtSize'] = _("Size:")
+		subs['txtImpact'] = _("Impact on packages:")
+		subs['packagesinfo'] = (', '.join(name for name in impacted_packages))
 		subs['loading_txt'] = _("Loading score...")
 		subs['votes'] = _('votes')
 		subs['vbad'] = _('Very bad')
@@ -1026,19 +1044,47 @@ class Application():
 			c.append(b.capitalize())
 		subs['appname'] = ' '.join(c)
 		subs['pkgname'] = package.pkg.name
-		subs['description'] = package.pkg.candidate.description
-		subs['description'] = subs['description'].replace('\n','<br>\n')
+		subs['description'] = package.pkg.candidate.description.replace('\n','<br>\n')
 		subs['summary'] = package.pkg.candidate.summary.capitalize()
 		subs['why'] = _('This is due to possible problems with your Internet connection.')
 
-		strSize = str(package.pkg.candidate.size) + _("B")
+		"""strSize = str(package.pkg.candidate.size) + _("B")
 		if package.pkg.candidate.size >= 1000:
 			strSize = str(package.pkg.candidate.size / 1000) + _("KB")
 		if package.pkg.candidate.size >= 1000000:
 			strSize = str(package.pkg.candidate.size / 1000000) + _("MB")
 		if package.pkg.candidate.size >= 1000000000:
-			strSize = str(package.pkg.candidate.size / 1000000000) + _("GB")
-		subs['size'] = strSize
+			strSize = str(package.pkg.candidate.size / 1000000000) + _("GB")"""
+
+		downloadSize = str(cache.required_download) + _("B")
+		if cache.required_download >= 1000:
+			downloadSize = str(cache.required_download / 1000) + _("KB")
+		if cache.required_download >= 1000000:
+			downloadSize = str(cache.required_download / 1000000) + _("MB")
+		if cache.required_download >= 1000000000:
+			downloadSize = str(cache.required_download / 1000000000) + _("GB")
+
+		requiredSpace = cache.required_space
+		if requiredSpace < 0:
+			requiredspace = (-1) * requiredSpace
+		localSize = str(requiredSpace) + _("B")
+		if requiredSpace >= 1000:
+			localSize = str(requiredSpace / 1000) + _("KB")
+		if requiredSpace >= 1000000:
+			localSize = str(requiredSpace / 1000000) + _("MB")
+		if requiredSpace >= 1000000000:
+			localSize = str(requiredSpace / 1000000000) + _("GB")
+
+		if package.pkg.is_installed:
+			if cache.required_space < 0:
+				subs['sizeinfo'] = _("%(localSize)s of disk space freed") % {'localSize': localSize}
+			else:
+				subs['sizeinfo'] = _("%(localSize)s of disk space required") % {'localSize': localSize}
+		else:
+			if cache.required_space < 0:
+				subs['sizeinfo'] = _("%(downloadSize)s to download, %(localSize)s of disk space freed") % {'downloadSize': downloadSize, 'localSize': localSize}
+			else:
+				subs['sizeinfo'] = _("%(downloadSize)s to download, %(localSize)s of disk space required") % {'downloadSize': downloadSize, 'localSize': localSize}
 
 		if len(package.pkg.candidate.homepage) > 0:
 			subs['website'] = '<a href="javascript:action_website_clicked()">' + _("Website") + '</a> -'
