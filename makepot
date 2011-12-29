@@ -1,2 +1,5 @@
 #!/bin/bash
 xgettext --language=Python --keyword=_ --output=po/tuquito-software-manager.pot usr/lib/tuquito/tuquito-software-manager/*.py
+cd po
+msgmerge es.po tuquito-software-manager.pot -o es.po
+msgmerge pt.po tuquito-software-manager.pot -o pt.po

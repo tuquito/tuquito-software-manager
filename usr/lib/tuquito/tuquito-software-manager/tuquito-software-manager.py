@@ -681,6 +681,13 @@ class Application():
 			else:
 				os.system("/usr/lib/tuquito/tuquito-software-manager/aptd_client.py install %s &" % package.pkg.name)
 
+	def on_screenshot_clicked(self):
+		package = self.current_package
+		if package is not None:
+			url = "http://community.linuxmint.com/img/screenshots/" + package.pkg.name + ".png"
+			self.websiteBrowser.open(url)
+			self.navigation_bar.add_with_id(_("Screenshot"), self.navigate, self.NAVIGATION_WEBSITE, "website")
+
 	def on_website_clicked(self):
 		package = self.current_package
 		if package != None:
@@ -878,18 +885,19 @@ class Application():
 
 		category.packages.sort()
 		for package in category.packages[0:500]:
-			iter = model_applications.insert_before(None, None)
-			model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon(package), 32, 32))
-			summary = ""
-			if package.pkg.candidate is not None:
-				summary = package.pkg.candidate.summary
-				summary = unicode(summary, 'UTF-8', 'replace')
-				summary = summary.replace("<", "&lt;")
-				summary = summary.replace("&", "&amp;")
+			if not (package.pkg.name.endswith(":i386") or package.pkg.name.endswith(":amd64")):
+				iter = model_applications.insert_before(None, None)
+				model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon(package), 32, 32))
+				summary = ""
+				if package.pkg.candidate is not None:
+					summary = package.pkg.candidate.summary
+					summary = unicode(summary, 'UTF-8', 'replace')
+					summary = summary.replace("<", "&lt;")
+					summary = summary.replace("&", "&amp;")
 
-			model_applications.set_value(iter, 1, "%s\n<small><span foreground='#555555'>%s</span></small>" % (package.name, summary.capitalize()))
+				model_applications.set_value(iter, 1, "%s\n<small><span foreground='#555555'>%s</span></small>" % (package.name, summary.capitalize()))
 
-			model_applications.set_value(iter, 3, package)
+				model_applications.set_value(iter, 3, package)
 
 		tree_applications.set_model(self.model_filter)
 		first = model_applications.get_iter_first()
@@ -1009,10 +1017,11 @@ class Application():
 			pkg.mark_install()
 		changes = cache.get_changes()
 		for pkg in changes:
-			if pkg.is_installed:
-				impacted_packages.append(_("%s (removed)") % pkg.name)
-			else:
-				impacted_packages.append(_("%s (installed)") % pkg.name)
+			if not (pkg.name.endswith(":i386") or pkg.name.endswith(":amd64")):
+				if pkg.is_installed:
+					impacted_packages.append(_("%s (removed)") % pkg.name)
+				else:
+					impacted_packages.append(_("%s (installed)") % pkg.name)
 
 		# Load package info
 		subs = {}
@@ -1047,14 +1056,6 @@ class Application():
 		subs['description'] = package.pkg.candidate.description.replace('\n','<br>\n')
 		subs['summary'] = package.pkg.candidate.summary.capitalize()
 		subs['why'] = _('This is due to possible problems with your Internet connection.')
-
-		"""strSize = str(package.pkg.candidate.size) + _("B")
-		if package.pkg.candidate.size >= 1000:
-			strSize = str(package.pkg.candidate.size / 1000) + _("KB")
-		if package.pkg.candidate.size >= 1000000:
-			strSize = str(package.pkg.candidate.size / 1000000) + _("MB")
-		if package.pkg.candidate.size >= 1000000000:
-			strSize = str(package.pkg.candidate.size / 1000000000) + _("GB")"""
 
 		downloadSize = str(cache.required_download) + _("B")
 		if cache.required_download >= 1000:
@@ -1104,7 +1105,6 @@ class Application():
 		template = open("/usr/lib/tuquito/tuquito-software-manager/data/templates/PackageView.html").read()
 		html = string.Template(template).safe_substitute(subs)
 		self.packageBrowser.load_html_string(html, "file:/")
-		# Update the navigation bar
 		self.navigation_bar.add_with_id(subs['appname'], self.navigate, self.NAVIGATION_ITEM, package)
 
 if __name__ == "__main__":
