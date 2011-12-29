@@ -1,3 +1,14 @@
+tuquito-software-manager (1.3-3) natty; urgency=low
+
+  * New CSS improved
+  * JS improved
+  * Screenshot added
+  * Comments fixed
+  * New translations
+  * New package info show
+
+ -- Mario Colque <mario@tuquito.org.ar>  Thu, 29 Dec 2011 19:27:59 -0300
+
 tuquito-software-manager (1.3-2) natty; urgency=low
 
   * Depends removed
