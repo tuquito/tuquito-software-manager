@@ -38,6 +38,11 @@ from widgets.searchentry import SearchEntry
 from user import home
 import base64
 
+# Don't let tuquito-software-manager run as root
+if os.getuid() == 0:
+    print "The Tuquito Software Manager should not be run as root. Please run it in user mode."
+    sys.exit(1)
+
 # i18n
 gettext.install("tuquito-software-manager", "/usr/share/tuquito/locale")
 
@@ -63,6 +68,8 @@ gtk.gdk.threads_init()
 
 global shutdown_flag
 shutdown_flag = False
+
+COMMERCIAL_APPS = ["chromium-browser"]
 
 class Splash(threading.Thread):
 	def __init__(self):
@@ -158,7 +165,14 @@ class TransactionLoop(threading.Thread):
 									while iter_apps is not None:
 										package = model_apps.get_value(iter_apps, 3)
 										if package.pkg.name == pkg_name:
-											model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.application.find_app_icon(package), 32, 32))
+											try:
+												model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.application.find_app_icon(package), 32, 32))
+											except:
+												try:
+													model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.application.find_app_icon_alternative(package), 32, 32))
+												except:
+													model_apps.set_value(iter_apps, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_fallback_icon(package), 32, 32))
+
 										iter_apps = model_apps.iter_next(iter_apps)
 								gtk.gdk.threads_leave()
 						else:
@@ -634,6 +648,9 @@ class Application():
 			self.show_package(self.selected_package)
 			selection.unselect_all()
 
+	def cache_apt(self):
+		self.cache = apt.Cache()
+
 	def navigate(self, button, destination):
 		if destination == "search":
 			self.notebook.set_current_page(self.PAGE_SEARCH)
@@ -842,16 +859,21 @@ class Application():
 				for category in self.categories:
 					if category.sections is not None:
 						if section in category.sections:
-							category.packages.append(package)
-							package.categories.append(category)
+							self.add_package_to_category(package, category)
 
 		# Process matching packages
 		for category in self.categories:
 			for package_name in category.matchingPackages:
 				if package_name in self.packages_dict:
 					package = self.packages_dict[package_name]
-					category.packages.append(package)
-					package.categories.append(category)
+					self.add_package_to_category(package, category)
+
+	def add_package_to_category(self, package, category):
+		if category.parent is not None:
+			if category not in package.categories:
+				package.categories.append(category)
+				category.packages.append(package)
+			self.add_package_to_category(package, category.parent)
 
 	def show_category(self, category):
 		# Load subcategories
@@ -885,9 +907,18 @@ class Application():
 
 		category.packages.sort()
 		for package in category.packages[0:500]:
+			if package.name in COMERCIAL_APPS:
+				continue
+
 			if not (package.pkg.name.endswith(":i386") or package.pkg.name.endswith(":amd64")):
 				iter = model_applications.insert_before(None, None)
-				model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon(package), 32, 32))
+				try:
+					model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon(package), 32, 32))
+				except:
+					try:
+						model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon_alternative(package), 32, 32))
+					except:
+						model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_fallback_icon(package), 32, 32))
 				summary = ""
 				if package.pkg.candidate is not None:
 					summary = package.pkg.candidate.summary
@@ -911,7 +942,46 @@ class Application():
 		else:
 			self.navigation_bar.add_with_id(category.name, self.navigate, self.NAVIGATION_SUB_CATEGORY, category)
 
+	def find_fallback_icon(self, package):
+		icon_path = None
+		if package.pkg.is_installed:
+			icon_path = "/usr/lib/tuquito/tuquito-software-manager/data/installed.png"
+		else:
+			icon_path = "/usr/lib/tuquito/tuquito-software-manager/data/available.png"
+		return icon_path
+
+	def find_app_icon_alternative(self, package):
+		icon_path = None
+		if package.pkg.is_installed:
+			icon_path = "/usr/share/tuquito/tuquito-software-manager/installed/%s" % package.name
+			if os.path.exists(icon_path + ".png"):
+				icon_path = icon_path + ".png"
+			elif os.path.exists(icon_path + ".xpm"):
+				icon_path = icon_path + ".xpm"
+			else:
+				# Else, default to generic icons
+				icon_path = "/usr/lib/tuquito/tuquito-software-manager/data/installed.png"
+		else:
+			# Try the Icon theme first
+			theme = gtk.icon_theme_get_default()
+			if theme.has_icon(package.name):
+				iconInfo = theme.lookup_icon(package.name, 32, 0)
+				if iconInfo and os.path.exists(iconInfo.get_filename()):
+					icon_path = iconInfo.get_filename()
+			else:
+				# Try tuquito-icons then
+				icon_path = "/usr/share/tuquito/tuquito-software-manager/icons/%s" % package.name
+				if os.path.exists(icon_path + ".png"):
+					icon_path = icon_path + ".png"
+				elif os.path.exists(icon_path + ".xpm"):
+					icon_path = icon_path + ".xpm"
+				else:
+					# Else, default to generic icons
+					icon_path = "/usr/lib/tuquito/tuquito-software-manager/data/available.png"
+		return icon_path
+
 	def find_app_icon(self, package):
+		icon_path = None
 		if package.pkg.is_installed:
 			icon_path = "/usr/share/tuquito/tuquito-software-manager/installed/%s" % package.name
 		else:
@@ -958,7 +1028,13 @@ class Application():
 							found = False
 			if aux and found:
 				iter = model_applications.insert_before(None, None)
-				model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon(package), 32, 32))
+				try:
+					model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon(package), 32, 32))
+				except:
+					try:
+						model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_app_icon_alternative(package), 32, 32))
+					except:
+						model_applications.set_value(iter, 0, gtk.gdk.pixbuf_new_from_file_at_size(self.find_fallback_icon(package), 32, 32))
 				summary = ""
 				if package.pkg.candidate is not None:
 					summary = package.pkg.candidate.summary
@@ -1007,15 +1083,14 @@ class Application():
 			if iconInfo and os.path.exists(iconInfo.get_filename()):
 				icon = iconInfo.get_filename()
 
-		impacted_packages = []
-
-		cache = apt.Cache()
-		pkg = cache[package.name]
+		impacted_packages  = []
+		pkg = self.cache(package.name)
 		if package.pkg.is_installed:
 			pkg.mark_delete(True, True)
 		else:
 			pkg.mark_install()
-		changes = cache.get_changes()
+
+		changes = self.cache.get_changes()
 		for pkg in changes:
 			if not (pkg.name.endswith(":i386") or pkg.name.endswith(":amd64")):
 				if pkg.is_installed:
@@ -1057,15 +1132,15 @@ class Application():
 		subs['summary'] = package.pkg.candidate.summary.capitalize()
 		subs['why'] = _('This is due to possible problems with your Internet connection.')
 
-		downloadSize = str(cache.required_download) + _("B")
-		if cache.required_download >= 1000:
-			downloadSize = str(cache.required_download / 1000) + _("KB")
-		if cache.required_download >= 1000000:
-			downloadSize = str(cache.required_download / 1000000) + _("MB")
-		if cache.required_download >= 1000000000:
-			downloadSize = str(cache.required_download / 1000000000) + _("GB")
+		downloadSize = str(self.cache.required_download) + _("B")
+		if self.cache.required_download >= 1000:
+			downloadSize = str(self.cache.required_download / 1000) + _("KB")
+		if self.cache.required_download >= 1000000:
+			downloadSize = str(self.cache.required_download / 1000000) + _("MB")
+		if self.cache.required_download >= 1000000000:
+			downloadSize = str(self.cache.required_download / 1000000000) + _("GB")
 
-		requiredSpace = cache.required_space
+		requiredSpace = self.cache.required_space
 		if requiredSpace < 0:
 			requiredspace = (-1) * requiredSpace
 		localSize = str(requiredSpace) + _("B")
@@ -1077,12 +1152,12 @@ class Application():
 			localSize = str(requiredSpace / 1000000000) + _("GB")
 
 		if package.pkg.is_installed:
-			if cache.required_space < 0:
+			if self.cache.required_space < 0:
 				subs['sizeinfo'] = _("%(localSize)s of disk space freed") % {'localSize': localSize}
 			else:
 				subs['sizeinfo'] = _("%(localSize)s of disk space required") % {'localSize': localSize}
 		else:
-			if cache.required_space < 0:
+			if self.cache.required_space < 0:
 				subs['sizeinfo'] = _("%(downloadSize)s to download, %(localSize)s of disk space freed") % {'downloadSize': downloadSize, 'localSize': localSize}
 			else:
 				subs['sizeinfo'] = _("%(downloadSize)s to download, %(localSize)s of disk space required") % {'downloadSize': downloadSize, 'localSize': localSize}
