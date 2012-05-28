@@ -1,3 +1,9 @@
+tuquito-software-manager (1.3-5) precise; urgency=low
+
+  * Clean
+
+ -- Mario Colque <mario@tuquito.org.ar>  Mon, 28 May 2012 12:49:18 -0300
+
 tuquito-software-manager (1.3-4) precise; urgency=low
 
   * Guarani branch
