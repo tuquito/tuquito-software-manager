@@ -37,6 +37,7 @@ from widgets.pathbar2 import NavigationBar
 from widgets.searchentry import SearchEntry
 from user import home
 import base64
+import glib
 
 # Don't let tuquito-software-manager run as root
 if os.getuid() == 0:
@@ -618,8 +619,13 @@ class Application():
 		column1.set_min_width(350)
 		column1.set_max_width(350)
 
+		# #prevents multiple load finished handlers being hooked up to packageBrowser in show_package
+		# self.loadHandlerID = -1
+		# self.acthread = threading.Thread(target=self.cache_apt)
+
 		treeview.append_column(column0)
 		treeview.append_column(column1)
+		# treeview.connect("row-activated", self.show_selected)
 		treeview.show()
 
 		selection = treeview.get_selection()
@@ -647,9 +653,11 @@ class Application():
 			self.selected_package = model.get_value(iter, 3)
 			self.show_package(self.selected_package)
 			selection.unselect_all()
+		# self.acthread.start()
 
 	def cache_apt(self):
-		self.cache = apt.Cache()
+		# self.cache = apt.Cache()
+		return apt.Cache()
 
 	def navigate(self, button, destination):
 		if destination == "search":
@@ -907,7 +915,7 @@ class Application():
 
 		category.packages.sort()
 		for package in category.packages[0:500]:
-			if package.name in COMERCIAL_APPS:
+			if package.name in COMMERCIAL_APPS:
 				continue
 
 			if not (package.pkg.name.endswith(":i386") or package.pkg.name.endswith(":amd64")):
@@ -1084,13 +1092,14 @@ class Application():
 				icon = iconInfo.get_filename()
 
 		impacted_packages  = []
-		pkg = self.cache(package.name)
+		cache = apt.Cache()
+		pkg = cache[package.name]
 		if package.pkg.is_installed:
 			pkg.mark_delete(True, True)
 		else:
 			pkg.mark_install()
 
-		changes = self.cache.get_changes()
+		changes = cache.get_changes()
 		for pkg in changes:
 			if not (pkg.name.endswith(":i386") or pkg.name.endswith(":amd64")):
 				if pkg.is_installed:
@@ -1132,17 +1141,17 @@ class Application():
 		subs['summary'] = package.pkg.candidate.summary.capitalize()
 		subs['why'] = _('This is due to possible problems with your Internet connection.')
 
-		downloadSize = str(self.cache.required_download) + _("B")
-		if self.cache.required_download >= 1000:
-			downloadSize = str(self.cache.required_download / 1000) + _("KB")
-		if self.cache.required_download >= 1000000:
-			downloadSize = str(self.cache.required_download / 1000000) + _("MB")
-		if self.cache.required_download >= 1000000000:
-			downloadSize = str(self.cache.required_download / 1000000000) + _("GB")
+		downloadSize = str(cache.required_download) + _("B")
+		if cache.required_download >= 1000:
+			downloadSize = str(cache.required_download / 1000) + _("KB")
+		if cache.required_download >= 1000000:
+			downloadSize = str(cache.required_download / 1000000) + _("MB")
+		if cache.required_download >= 1000000000:
+			downloadSize = str(cache.required_download / 1000000000) + _("GB")
 
-		requiredSpace = self.cache.required_space
+		requiredSpace = cache.required_space
 		if requiredSpace < 0:
-			requiredspace = (-1) * requiredSpace
+			requiredSpace = (-1) * requiredSpace
 		localSize = str(requiredSpace) + _("B")
 		if requiredSpace >= 1000:
 			localSize = str(requiredSpace / 1000) + _("KB")
@@ -1152,12 +1161,12 @@ class Application():
 			localSize = str(requiredSpace / 1000000000) + _("GB")
 
 		if package.pkg.is_installed:
-			if self.cache.required_space < 0:
+			if cache.required_space < 0:
 				subs['sizeinfo'] = _("%(localSize)s of disk space freed") % {'localSize': localSize}
 			else:
 				subs['sizeinfo'] = _("%(localSize)s of disk space required") % {'localSize': localSize}
 		else:
-			if self.cache.required_space < 0:
+			if cache.required_space < 0:
 				subs['sizeinfo'] = _("%(downloadSize)s to download, %(localSize)s of disk space freed") % {'downloadSize': downloadSize, 'localSize': localSize}
 			else:
 				subs['sizeinfo'] = _("%(downloadSize)s to download, %(localSize)s of disk space required") % {'downloadSize': downloadSize, 'localSize': localSize}
