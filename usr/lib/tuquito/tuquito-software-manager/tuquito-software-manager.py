@@ -37,7 +37,6 @@ from widgets.pathbar2 import NavigationBar
 from widgets.searchentry import SearchEntry
 from user import home
 import base64
-import glib
 
 # Don't let tuquito-software-manager run as root
 if os.getuid() == 0:
@@ -619,13 +618,8 @@ class Application():
 		column1.set_min_width(350)
 		column1.set_max_width(350)
 
-		# #prevents multiple load finished handlers being hooked up to packageBrowser in show_package
-		# self.loadHandlerID = -1
-		# self.acthread = threading.Thread(target=self.cache_apt)
-
 		treeview.append_column(column0)
 		treeview.append_column(column1)
-		# treeview.connect("row-activated", self.show_selected)
 		treeview.show()
 
 		selection = treeview.get_selection()
@@ -653,11 +647,6 @@ class Application():
 			self.selected_package = model.get_value(iter, 3)
 			self.show_package(self.selected_package)
 			selection.unselect_all()
-		# self.acthread.start()
-
-	def cache_apt(self):
-		# self.cache = apt.Cache()
-		return apt.Cache()
 
 	def navigate(self, button, destination):
 		if destination == "search":
